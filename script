@@ -7,19 +7,15 @@ DISK='disk.iso'
 
 function add_grub {
 ftp -in $HOST <<FTP
-
 quote user $USER
 type binary
-cd gnu
-cd grub
+cd gnu/grub
 get grub-0.97-i386-pc.tar.gz
 bye
-
 FTP
-
 tar xf $FILE
 cd `expr substr $FILE 1 17`
-cd boot/grub
+cd /boot/grub
 cat stage1 stage2 > $DISK
 mv $DISK ../../..
 cd ../../..
@@ -27,8 +23,10 @@ rm -r grub*
 }
 
 function add_pad {
-dd if=/dev/zero of=pad bs=1 count=750
+dd if=/dev/zero of=pad bs=1 count=750 \
+> /dev/null 2>&1
 cat pad >> $DISK
+rm -f pad
 }
 
 function add_kernel {
@@ -36,9 +34,19 @@ cat $2 >> $DISK
 }
 
 function build {
-	add_grub
-	add_pad
-	add_kernel
+add_grub
+add_pad
+add_kernel
+}
+
+function run {
+sudo /sbin/losetup /dev/loop0 disk.iso
+sudo bochs -f .bochsrc
+sudo /sbin/losetup -d /dev/loop0
+}
+
+function clean {
+rm -f disk.iso
 }
 
 case "$1" in
@@ -53,6 +61,12 @@ case "$1" in
 		;;
 	kernel)
 		add_kernel
+		;;
+	run)
+		run
+		;;
+	clean)
+		clean
 		;;
 esac
 exit 0
