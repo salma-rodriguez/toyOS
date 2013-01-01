@@ -3,7 +3,7 @@
 HOST='alpha.gnu.org'
 USER='anonymous'
 FILE='grub-0.97-i386-pc.tar.gz'
-DISK='disk.img'
+DISK='disk.iso'
 
 function add_grub {
 ftp -in $HOST <<FTP
@@ -19,21 +19,20 @@ FTP
 
 tar xf $FILE
 cd `expr substr $FILE 1 17`
-cd boot
-cd grub
-cat stage1 stage2 > disk.iso
-mv disk.iso ../../..
+cd boot/grub
+cat stage1 stage2 > $DISK
+mv $DISK ../../..
 cd ../../..
 rm -r grub*
 }
 
 function add_pad {
 dd if=/dev/zero of=pad bs=1 count=750
-cat pad >> disk.iso
+cat pad >> $DISK
 }
 
 function add_kernel {
-cat $2 >> disk.iso
+cat $2 >> $DISK
 }
 
 function build {
