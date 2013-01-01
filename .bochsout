@@ -30,59 +30,59 @@
 00000000000i[     ]   SB16 support: yes
 00000000000i[     ]   USB support: yes
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f3523aa7010. after alignment, vector=0x7f3523aa8000
+00000000000i[MEM0 ] allocated memory at 0x7fdde7450010. after alignment, vector=0x7fdde7451000
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/share/bochs/VGABIOS-lgpl-latest')
-00000000000i[     ] lt_dlhandle is 0x23c9eb0
+00000000000i[     ] lt_dlhandle is 0x2c36eb0
 00000000000i[PLGIN] loaded plugin libbx_cmos.so
-00000000000i[     ] lt_dlhandle is 0x23ca8d0
+00000000000i[     ] lt_dlhandle is 0x2c378d0
 00000000000i[PLGIN] loaded plugin libbx_dma.so
-00000000000i[     ] lt_dlhandle is 0x23cb330
+00000000000i[     ] lt_dlhandle is 0x2c38330
 00000000000i[PLGIN] loaded plugin libbx_pic.so
-00000000000i[     ] lt_dlhandle is 0x23cbb70
+00000000000i[     ] lt_dlhandle is 0x2c38b70
 00000000000i[PLGIN] loaded plugin libbx_pit.so
-00000000000i[     ] lt_dlhandle is 0x23cc4e0
+00000000000i[     ] lt_dlhandle is 0x2c394e0
 00000000000i[PLGIN] loaded plugin libbx_vga.so
-00000000000i[     ] lt_dlhandle is 0x23ccc10
+00000000000i[     ] lt_dlhandle is 0x2c39c10
 00000000000i[PLGIN] loaded plugin libbx_hdimage.so
-00000000000i[     ] lt_dlhandle is 0x23cd4d0
+00000000000i[     ] lt_dlhandle is 0x2c3a4d0
 00000000000i[PLGIN] loaded plugin libbx_floppy.so
-00000000000i[     ] lt_dlhandle is 0x23ce0c0
+00000000000i[     ] lt_dlhandle is 0x2c3b0c0
 00000000000i[PLGIN] loaded plugin libbx_soundmod.so
-00000000000i[     ] lt_dlhandle is 0x23cf710
+00000000000i[     ] lt_dlhandle is 0x2c3c710
 00000000000i[PLGIN] loaded plugin libbx_pci.so
-00000000000i[     ] lt_dlhandle is 0x23d0340
+00000000000i[     ] lt_dlhandle is 0x2c3d340
 00000000000i[PLGIN] loaded plugin libbx_pci2isa.so
-00000000000i[     ] lt_dlhandle is 0x23d0c20
+00000000000i[     ] lt_dlhandle is 0x2c3dc20
 00000000000i[PLGIN] loaded plugin libbx_usb_common.so
-00000000000i[     ] lt_dlhandle is 0x23d1480
+00000000000i[     ] lt_dlhandle is 0x2c3e480
 00000000000i[PLGIN] loaded plugin libbx_unmapped.so
-00000000000i[     ] lt_dlhandle is 0x23d1cf0
+00000000000i[     ] lt_dlhandle is 0x2c3ecf0
 00000000000i[PLGIN] loaded plugin libbx_biosdev.so
-00000000000i[     ] lt_dlhandle is 0x23d2620
+00000000000i[     ] lt_dlhandle is 0x2c3f620
 00000000000i[PLGIN] loaded plugin libbx_speaker.so
-00000000000i[     ] lt_dlhandle is 0x23d2e50
+00000000000i[     ] lt_dlhandle is 0x2c3fe50
 00000000000i[PLGIN] loaded plugin libbx_extfpuirq.so
-00000000000i[     ] lt_dlhandle is 0x23d36c0
+00000000000i[     ] lt_dlhandle is 0x2c406c0
 00000000000i[PLGIN] loaded plugin libbx_gameport.so
-00000000000i[     ] lt_dlhandle is 0x23d4030
+00000000000i[     ] lt_dlhandle is 0x2c41030
 00000000000i[PLGIN] loaded plugin libbx_pci_ide.so
-00000000000i[     ] lt_dlhandle is 0x23d4a00
+00000000000i[     ] lt_dlhandle is 0x2c41a00
 00000000000i[PLGIN] loaded plugin libbx_acpi.so
-00000000000i[     ] lt_dlhandle is 0x23d5340
+00000000000i[     ] lt_dlhandle is 0x2c42340
 00000000000i[PLGIN] loaded plugin libbx_ioapic.so
-00000000000i[     ] lt_dlhandle is 0x23d5cf0
+00000000000i[     ] lt_dlhandle is 0x2c42cf0
 00000000000i[PLGIN] loaded plugin libbx_keyboard.so
-00000000000i[     ] lt_dlhandle is 0x23d64f0
+00000000000i[     ] lt_dlhandle is 0x2c434f0
 00000000000i[PLGIN] loaded plugin libbx_harddrv.so
-00000000000i[     ] lt_dlhandle is 0x23e85c0
+00000000000i[     ] lt_dlhandle is 0x2c555c0
 00000000000i[PLGIN] loaded plugin libbx_serial.so
-00000000000i[     ] lt_dlhandle is 0x23e9430
+00000000000i[     ] lt_dlhandle is 0x2c56430
 00000000000i[PLGIN] loaded plugin libbx_parallel.so
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Mon Dec 31 19:12:28 2012 (time0=1356999148)
+00000000000i[CMOS ] Setting initial clock to: Mon Dec 31 19:31:31 2012 (time0=1357000291)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'disk.iso' ro=0, h=2,t=80,spt=18
