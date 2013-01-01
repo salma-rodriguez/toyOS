@@ -1,0 +1,59 @@
+#!/bin/zsh
+
+HOST='alpha.gnu.org'
+USER='anonymous'
+FILE='grub-0.97-i386-pc.tar.gz'
+DISK='disk.img'
+
+function add_grub {
+ftp -in $HOST <<FTP
+
+quote user $USER
+type binary
+cd gnu
+cd grub
+get grub-0.97-i386-pc.tar.gz
+bye
+
+FTP
+
+tar xf $FILE
+cd `expr substr $FILE 1 17`
+cd boot
+cd grub
+cat stage1 stage2 > disk.iso
+mv disk.iso ../../..
+cd ../../..
+rm -r grub*
+}
+
+function add_pad {
+dd if=/dev/zero of=pad bs=1 count=750
+cat pad >> disk.iso
+}
+
+function add_kernel {
+cat $2 >> disk.iso
+}
+
+function build {
+	add_grub
+	add_pad
+	add_kernel
+}
+
+case "$1" in
+	all)
+		build
+		;;
+	pad)
+		add_pad
+		;;
+	grub)
+		add_grub
+		;;
+	kernel)
+		add_kernel
+		;;
+esac
+exit 0
