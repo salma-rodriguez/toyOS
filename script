@@ -35,15 +35,6 @@ cat src/kernel >> $DISK \
 	> /dev/null 2>&1
 }
 
-function update {
-sudo losetup /dev/loop0 disk.iso
-sudo mke2fs /dev/loop0
-sudo mount /dev/loop0 /mnt
-sudo cp src/kernel /mnt/kernel
-sudo umount /dev/loop0
-sudo losetup -d /dev/loop0
-}
-
 function clean {
 make -C src clean > /dev/null 2>&1
 rm -f disk.iso
@@ -57,17 +48,15 @@ add_kernel
 }
 
 function run {
-# sudo losetup /dev/loop0 disk.iso
 sudo bochs -f .bochsrc
-# sudo /sbin/losetup -d /dev/loop0
 }
 
 case "$1" in
+	clean)
+		clean
+		;;
 	build)
 		build
-		;;
-	update)
-		update
 		;;
 	pad)
 		add_pad
@@ -81,8 +70,5 @@ case "$1" in
 	run)
 		run
 		;;
-	clean)
-		clean
-		;;
-esac
+	esac
 exit 0
