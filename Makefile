@@ -1,21 +1,35 @@
 CC	= gcc
-CFLAGS	= -Wall -m32 -nostdlib -fno-builtin -nostartfiles \
+AS 	= nasm
+LD	= ld
+CFLAGS	= -Wall -m32 -c -nostdlib -fno-builtin -nostartfiles \
        	  -nodefaultlibs -nostdinc -mno-sse -fno-stack-protector
-LDFLAGS	= -T link.ld -m elf_i386
+LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf 
 
+BIN	= bin
 BOOT	= boot
 
-TARGET	= kernel
+TARGET	= $(BIN)/kernel
 
-SOURCES += $(BOOT)/boot.o
-SOURCES += $(BOOT)/kernel.o
+VPATH	= boot
+MKDIR	= $(CURDIR)/$(BIN)
 
-all: $(SOURCES) link
+ASSRCS	+= boot.s
+SOURCES += kernel.c
 
-clean:
-	${RM} $(BOOT)/*.o kernel
-link:
-	ld $(LDFLAGS) -o $(TARGET) $(SOURCES)
-.s.o:
-	nasm $(ASFLAGS) $< 
+OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
+ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
+
+$(shell `mkdir -p $(MKDIR)`)
+
+all: $(TARGET)
+
+$(TARGET) : $(OBJS) $(ASOBJS)
+	$(LD) $(LDFLAGS) -o $(TARGET) $(OBJS) $(ASOBJS)
+$(BIN)/%.o : %.c
+	$(CC) $(CFLAGS) -o $@ $<
+$(BIN)/%.o : %.s
+	$(AS) $(ASFLAGS) -o $@ $< 
+clean :
+	${RM} -r $(BIN)
+.PHONY : clean
