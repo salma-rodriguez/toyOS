@@ -15,7 +15,7 @@ bye
 FTP
 tar xf $FILE
 cd `expr substr $FILE 1 17`
-cd /boot/grub
+cd boot/grub
 cat stage1 stage2 > $DISK
 mv $DISK ../../..
 cd ../../..
@@ -24,34 +24,50 @@ rm -r grub*
 
 function add_pad {
 dd if=/dev/zero of=pad bs=1 count=750 \
-> /dev/null 2>&1
+	> /dev/null 2>&1
 cat pad >> $DISK
 rm -f pad
 }
 
 function add_kernel {
-cat $2 >> $DISK
+make -C src > /dev/null 2>&1
+cat src/kernel >> $DISK \
+	> /dev/null 2>&1
+}
+
+function update {
+sudo losetup /dev/loop0 disk.iso
+sudo mke2fs /dev/loop0
+sudo mount /dev/loop0 /mnt
+sudo cp src/kernel /mnt/kernel
+sudo umount /dev/loop0
+sudo losetup -d /dev/loop0
+}
+
+function clean {
+make -C src clean > /dev/null 2>&1
+rm -f disk.iso
 }
 
 function build {
+clean
 add_grub
 add_pad
 add_kernel
 }
 
 function run {
-sudo /sbin/losetup /dev/loop0 disk.iso
+# sudo losetup /dev/loop0 disk.iso
 sudo bochs -f .bochsrc
-sudo /sbin/losetup -d /dev/loop0
-}
-
-function clean {
-rm -f disk.iso
+# sudo /sbin/losetup -d /dev/loop0
 }
 
 case "$1" in
-	all)
+	build)
 		build
+		;;
+	update)
+		update
 		;;
 	pad)
 		add_pad
