@@ -1,8 +1,8 @@
 #include "multiboot.h"
+#include <kernel/monitor.h>
 
 int kmain(struct multiboot_info *mbd, unsigned int magic) {
-	volatile unsigned char *videoram = (unsigned char *)0xB8000;
-	videoram[0] = 65;
-	videoram[1] = 0x07; 
+	monitor_clear();
+	monitor_write("Hello, world!");
 	return 0;
 }
