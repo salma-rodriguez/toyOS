@@ -37,7 +37,7 @@ cat kernel >> $DISK \
 
 function clean {
 make clean > /dev/null 2>&1
-rm -f disk.iso
+rm -f disk.iso .bochsout
 }
 
 function build {
