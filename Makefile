@@ -1,13 +1,13 @@
 CC	= gcc
 AS 	= nasm
 LD	= ld
-CFLAGS	= -Wall -m32 -c -nostdlib -fno-builtin -nostartfiles \
-       	  -nodefaultlibs -nostdinc -mno-sse -fno-stack-protector
+CFLAGS	= -Wall -m32 -c -I./include -nostdlib -mno-sse \
+	  -nostartfiles -nodefaultlibs -nostdinc -fno-builtin \
+	  -fno-stack-protector
 LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf 
 
 BIN	= bin
-BOOT	= boot
 
 TARGET	= $(BIN)/kernel
 
@@ -15,8 +15,7 @@ VPATH	= boot
 MKDIR	= $(CURDIR)/$(BIN)
 
 ASSRCS	+= boot.s
-SOURCES += kernel.c
-
+SOURCES += common.c monitor.c kernel.c
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
 
