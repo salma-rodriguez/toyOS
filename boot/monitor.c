@@ -1,3 +1,4 @@
+#include <kernel/types.h>
 #include <kernel/common.h>
 #include <kernel/monitor.h>
 
