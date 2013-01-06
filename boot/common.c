@@ -1,3 +1,4 @@
+#include <kernel/types.h>
 #include <kernel/common.h>
 
 u8 inb(u16 port)
