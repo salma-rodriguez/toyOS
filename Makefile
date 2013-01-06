@@ -11,11 +11,12 @@ BIN	= bin
 
 TARGET	= $(BIN)/kernel
 
-VPATH	= boot
+VPATH	= boot lib
 MKDIR	= $(CURDIR)/$(BIN)
 
 ASSRCS	+= boot.s
 SOURCES += common.c monitor.c kernel.c
+SOURCES += string.c
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
 
