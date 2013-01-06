@@ -1,6 +1,8 @@
 global start
 extern kmain
 
+section .rodata
+
 MODALIGN	equ 1<<0
 MEMINFO		equ 1<<1
 FLAGS		equ MODALIGN | MEMINFO
@@ -14,7 +16,6 @@ align 4
 	dd MAGIC
 	dd FLAGS
 	dd CHECKSUM
-
 start:
 	mov esp, stack + STACKSIZ
 	push eax
@@ -30,4 +31,4 @@ start:
 section .bss
 
 align 4
-stack: 	resb STACKSIZ
+stack resb STACKSIZ
