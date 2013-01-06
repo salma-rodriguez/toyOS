@@ -2,10 +2,15 @@
 #include <string.h>
 #include <kernel/monitor.h>
 
-int kmain(struct multiboot_info *mbd, unsigned int magic) {
+int kmain(multiboot_info_t *mbd, unsigned int magic) {
 	char *cs, *ct;
 	monitor_clear();
 	cs = "Hello, world!";
+
+	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+		monitor_write("boot magic is incorrect");
+		/* next: do something, like PANIC */
+	}
 
 	/* testing strlen */
 
