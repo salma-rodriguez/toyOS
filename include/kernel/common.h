@@ -1,8 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-u8 inb(u16 port);
-u16 inw(u16 port);
-void outb(u16 port, u8 value);
+__u8 inb(__u16 port);
+__u16 inw(__u16 port);
+void outb(__u16 port, __u8 value);
 
 #endif
