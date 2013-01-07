@@ -8,16 +8,16 @@
 #define TABSTOP 0x08
 
 // Store cursor position
-u8 c_x = 0;
-u8 c_y = 0;
+__u8 c_x = 0;
+__u8 c_y = 0;
 
 // VGA frame buffer begins at 0xB800
-u16 *video_memory = (u16 *)0xB8000;
+__u16 *video_memory = (__u16 *)0xB8000;
 
 // Update hardware cursor
 static void move_cursor()
 {
-	u16 loc;
+	__u16 loc;
 	// Working with 80-character screen
 	// Determin location of cursor on the screen
 	loc = c_y * 80 + c_x;
@@ -35,8 +35,8 @@ static void move_cursor()
 static void scroll()
 {
 	int area;
-	u16 blank;
-	u8 attribyte;
+	__u16 blank;
+	__u8 attribyte;
 	
 	area = 24*80;
 	attribyte = (BGCOLOR << 4) | (FGCOLOR & 0x0F);
@@ -61,8 +61,8 @@ static void scroll()
 void monitor_clear()
 {
 	int area;
-	u16 blank;
-	u8 attribyte;
+	__u16 blank;
+	__u8 attribyte;
 
 	area = 24*80;
 	// Make an attribute byte for the default colors
@@ -82,10 +82,10 @@ void monitor_clear()
 // Write a single character out to the screen.
 void monitor_put(char c)
 {
-	u8 fg_color;
-	u8 bg_color;
-	u8 attribyte;
-	u16 attribute, *location;
+	__u8 fg_color;
+	__u8 bg_color;
+	__u8 attribyte;
+	__u16 attribute, *location;
 
 	bg_color = BGCOLOR;
 	fg_color = FGCOLOR;
