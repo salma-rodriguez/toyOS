@@ -1,21 +1,21 @@
 #include <kernel/types.h>
 #include <kernel/common.h>
 
-u8 inb(u16 port)
+__u8 inb(__u16 port)
 {
-	u8 ret;
+	__u8 ret;
 	asm volatile("inb %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }
 
-u16 inw(u16 port)
+__u16 inw(__u16 port)
 {
-	u16 ret;
+	__u16 ret;
 	asm volatile ("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }
 
-void outb(u16 port, u8 value)
+void outb(__u16 port, __u8 value)
 {
 	asm volatile ("outb %1, %0" : : "dN" (port), "a" (value));
 }
