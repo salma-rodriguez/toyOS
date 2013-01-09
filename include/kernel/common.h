@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef _COMMON_H_
+#define _COMMON_H_
 
 __u8 inb(__u16 port);
 __u16 inw(__u16 port);
