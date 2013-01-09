@@ -2,8 +2,10 @@
 // next: 1. make POSIX-compliant by using posix_types.h
 // 	 2. declare assembly types in another file (maybe)
 
-#ifndef TYPES_H_
-#define TYPES_H_
+#ifndef _TYPES_H_
+#define _TYPES_H_
+
+#define NULL ((void *) 0)
 
 typedef char 		__s8;
 typedef short 		__s16;
