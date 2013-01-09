@@ -1,5 +1,5 @@
-#ifndef MONITOR_H
-#define MONITOR_H
+#ifndef _MONITOR_H_
+#define _MONITOR_H_
 
 #define BLACK	0
 #define BLUE	1
