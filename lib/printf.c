@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include <kernel/types.h>
