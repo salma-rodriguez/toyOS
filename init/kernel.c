@@ -1,6 +1,6 @@
 #include "multiboot.h"
+#include <stdio.h>
 #include <string.h>
-#include <sprint.h>
 #include <kernel/monitor.h>
 
 int kmain(multiboot_info_t *mbd, unsigned int magic) {
@@ -44,20 +44,6 @@ int kmain(multiboot_info_t *mbd, unsigned int magic) {
 	printf("cs before memset: %s\n", cs);
 
 	cs = memset(cs, 'H', 14);
-
-	/* memset(&cs[0],'H',1);
-	memset(&cs[1],'e',1);
-	memset(&cs[2],'l',2);
-	memset(&cs[4],'o',1);
-	memset(&cs[5],',',1);
-	memset(&cs[6],' ',1);
-	memset(&cs[7],'w',1);
-	memset(&cs[8],'o',1);
-	memset(&cs[9],'r',1);
-	memset(&cs[10],'l',1);
-	memset(&cs[11],'d',1);
-	memset(&cs[12],'!',1);
-	memset(&cs[13],'\n',1); */
 
 	printf("cs after memset: %s\n", cs);
 
