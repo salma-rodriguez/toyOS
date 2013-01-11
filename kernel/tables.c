@@ -1,28 +1,28 @@
 #include <string.h>
 #include <kernel/types.h>
 #include <asm/segment.h>
-// #include <asm/interrupt.h>
+#include <asm/interrupt.h>
 #include <kernel/common.h>
 
 #define NOINTS	256
 #define MAXADDR 0xFFFFFFFF
 
 static void gdt_init();
-// static void idt_init();
+static void idt_init();
 extern void gdt_flush(uint32_t);
-// extern void idt_flush(uint32_t);
+extern void idt_flush(uint32_t);
 static void gdt_set_gate(int32_t, uint32_t, uint32_t, uint8_t, uint8_t);
-// static void idt_set_gate(uint8_t, uint32_t, uint16_t, uint8_t); */
+static void idt_set_gate(uint8_t, uint32_t, uint16_t, uint8_t);
 
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t   gdt_ptr;
-/* idt_entry_t idt_entries[NOINTS];
-idt_ptr_t   idt_ptr; */
+idt_entry_t idt_entries[NOINTS];
+idt_ptr_t   idt_ptr;
 
 void init_descriptor_tables()
 {
 	gdt_init();
-	// idt_init();
+	idt_init();
 }
 
 /* static void gdt_flush(uint32_t gdt_ptr)
@@ -49,15 +49,15 @@ static void gdt_init()
 	gdt_ptr.base = (uint32_t)&gdt_entries;
 	
 	gdt_set_gate(0, 0, 0, 0, 0);
-	// gdt_set_gate(1, 0, MAXADDR, 0x9A, 0xCF);
-	/* gdt_set_gate(2, 0, MAXADDR, 0x92, 0xCF);
+	gdt_set_gate(1, 0, MAXADDR, 0x9A, 0xCF);
+	gdt_set_gate(2, 0, MAXADDR, 0x92, 0xCF);
 	gdt_set_gate(3, 0, MAXADDR, 0xFA, 0xCF);
-	gdt_set_gate(4, 0, MAXADDR, 0xF2, 0xCF); */
+	gdt_set_gate(4, 0, MAXADDR, 0xF2, 0xCF);
 
-	// gdt_flush((uint32_t)&gdt_ptr);
+	gdt_flush((uint32_t)&gdt_ptr);
 }
 
-/* static void idt_init()
+static void idt_init()
 {
 	idt_ptr.limit = sizeof(idt_entry_t) * NOINTS - 1;
 	idt_ptr.base  = (uint32_t)&idt_entries;
@@ -98,27 +98,27 @@ static void gdt_init()
 	idt_set_gate(31, (uint32_t)isr31, 0x08, 0x8E);
 
 	idt_flush((uint32_t)&idt_ptr);
-} */
+}
 
 static void gdt_set_gate(int32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran)
 {
-	gdt_entries[num].base_l 	= (base & 0xFFFF);
-	/* gdt_entries[num].base_m 	= (base >> 16) & 0xFF;
-	gdt_entries[num].base_h 	= (base >> 24) & 0xFF;
+	gdt_entries[num].base_l = (base & 0xFFFF);
+	gdt_entries[num].base_m = (base >> 16) & 0xFF;
+	gdt_entries[num].base_h = (base >> 24) & 0xFF;
 	
-	gdt_entries[num].limit_l 	= (limit & 0xFFFF);
-	gdt_entries[num].granularity 	= (limit >> 16) & 0x0F;
+	gdt_entries[num].limit_l = (limit & 0xFFFF);
+	gdt_entries[num].granularity = ((limit >> 16) & 0x0F);
 
-	gdt_entries[num].granularity 	|= gran & 0xF0;
-	gdt_entries[num].access 	= access; */
+	gdt_entries[num].granularity |= gran & 0xF0;
+	gdt_entries[num].access = access;
 }
 
-/* static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
+static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
 {
-	idt_entries[num].base_lo = base & 0xFFFF;
-	idt_entries[num].base_hi = (base >> 16) & 0xFFFF;
+     idt_entries[num].base_lo = base & 0xFFFF;
+     idt_entries[num].base_hi = (base >> 16) & 0xFFFF;
 
-	idt_entries[num].sel	 = sel;
-	idt_entries[num].always0 = 0;
-	idt_entries[num].flags = flags;
-} */
+     idt_entries[num].sel = sel;
+     idt_entries[num].always0 = 0;
+     idt_entries[num].flags = flags;
+}
