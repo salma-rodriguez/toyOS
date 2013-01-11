@@ -10,7 +10,7 @@ MAGIC		equ 0x1BADB002
 CHECKSUM	equ -(MAGIC + FLAGS)
 STACKSIZ 	equ 0x4000
 
-section .text
+section .header
 
 align 4
 	dd MAGIC
