@@ -1,4 +1,3 @@
-global isr0
 global idt_flush
 
 idt_flush:
