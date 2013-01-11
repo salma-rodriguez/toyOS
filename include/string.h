@@ -10,7 +10,7 @@
 typedef unsigned int size_t;
 #endif
 
-#define __asm__ asm volatile
+#define __asm__ __asm__ __volatile__
 
 #ifndef __always_inline
 #define __always_inline inline
