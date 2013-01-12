@@ -106,8 +106,8 @@ static void gdt_set_gate(int32_t num, uint32_t base, uint32_t limit, uint8_t acc
 	gdt_entries[num].base_m = (base >> 16) & 0xFF;
 	gdt_entries[num].base_h = (base >> 24) & 0xFF;
 	
-	gdt_entries[num].limit_l = (limit & 0xFFFF);
-	gdt_entries[num].granularity = ((limit >> 16) & 0x0F);
+	gdt_entries[num].limit_l = limit & 0xFFFF;
+	gdt_entries[num].granularity = (limit >> 16) & 0x0F;
 
 	gdt_entries[num].granularity |= gran & 0xF0;
 	gdt_entries[num].access = access;
