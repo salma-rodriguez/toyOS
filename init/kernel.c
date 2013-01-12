@@ -45,11 +45,15 @@ int kmain(multiboot_info_t *mbd, unsigned int magic) {
 
 	cs = memset(cs, 'H', 14);
 	printf("cs after memset: %s\n", cs);
+	
+	/* initialize discriptor tables */
+
+	init_descriptor_tables();
 
 	/* testing interrupts */
 
-	// __asm__ __volatile__("int $0x3");
-	// __asm__ __volatile__("int $0x4");
+	__asm__ __volatile__("int $0x3");
+	__asm__ __volatile__("int $0x4");
 
 	return 0;
 }
