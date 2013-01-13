@@ -3,6 +3,8 @@
 #include <string.h>
 #include <kernel/monitor.h>
 
+extern void init_descriptor_tables();
+
 int kmain(multiboot_info_t *mbd, unsigned int magic) {
 	char *cs, *ct;
 	monitor_clear();
