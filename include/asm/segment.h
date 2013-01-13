@@ -4,11 +4,11 @@
 
 struct gdt_entry_struct
 {
-	uint16_t limit_l;	// lower 16 bits of the limit
+	uint16_t limit;		// lower 16 bits of the limit
 	uint16_t base_l;	// lower 16 bits of the base
 	uint8_t	 base_m;	// middle eight bits of the base
-	uint8_t	 access;	// access flags, determines ring
-	uint8_t	 granularity;
+	uint8_t	 privge;	// access flags, determines ring
+	uint8_t	 granty;
 	uint8_t	 base_h;	// last 8 bits of the base
 } __attribute__((packed));
 typedef struct gdt_entry_struct gdt_entry_t;
