@@ -67,6 +67,17 @@
 	val;						\
 })
 
+#define IDT_SET_GATE(base, sel, flags) ({		\
+	idt_entry_t val;				\
+	val = (idt_entry_t) {				\
+	.base_lo = base & 0xFFFF,			\
+	.base_hi = base >> 16 & 0xFFFF,			\
+	.sel = sel,					\
+	.always0 = 0,					\
+	.flags = flags };				\
+	val;						\
+})
+
 #endif /* SEGMENT_FLAGS */
 
 __u8 inb(__u16 port);
