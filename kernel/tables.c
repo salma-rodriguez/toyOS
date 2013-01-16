@@ -11,7 +11,7 @@ static void gdt_init();
 static void idt_init();
 extern void gdt_flush(uint32_t);
 extern void idt_flush(uint32_t);
-static void idt_set_gate(uint8_t, uint32_t, uint16_t, uint8_t);
+static inline void idt_set_gate(uint8_t, uint32_t, uint16_t, uint8_t);
 
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t   gdt_ptr;
@@ -37,6 +37,8 @@ static void gdt_init()
 
 	gdt_flush((uint32_t)&gdt_ptr);
 }
+
+
 
 static void idt_init()
 {
@@ -81,12 +83,7 @@ static void idt_init()
 	idt_flush((uint32_t)&idt_ptr);
 }
 
-static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
+static inline void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
 {
-     idt_entries[num].base_lo = base & 0xFFFF;
-     idt_entries[num].base_hi = (base >> 16) & 0xFFFF;
-
-     idt_entries[num].sel = sel;
-     idt_entries[num].always0 = 0;
-     idt_entries[num].flags = flags;
+     idt_entries[num] = IDT_SET_GATE(base, sel, flags);
 }
