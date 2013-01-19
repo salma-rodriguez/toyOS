@@ -17,13 +17,13 @@ MKDIR	= $(CURDIR)/$(BIN)
 # under boot
 ASSRCS	+= boot.s
 # under kernel
-ASSRCS  += interrupt.s segment.s
+ASSRCS  += interrupt.s
 # under lib
 SOURCES += string.c ctype.c printf.c
 # under init
 SOURCES += common.c monitor.c kernel.c
 # under kernel
-SOURCES += isr.c tables.c
+SOURCES += isr.c tables.c timer.c
 
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
