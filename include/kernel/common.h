@@ -43,7 +43,7 @@
 #define GRANULARITY(L) SEG_GRAN(1) 	| SEG_SIZE(1) | \
 			SEG_LONG(0)	| SEG_SAVL(0) | L
 
-#define GDT_CODE_GATE(dpl, base, lim) 	({		\
+#define GDT_CODE_GATE(dpl, base, lim) ({		\
 	gdt_entry_t val;				\
 	val = (gdt_entry_t) { 				\
 	.limit  = lim & 0xFFFF,				\
@@ -55,7 +55,7 @@
 	val;						\
 })
 
-#define GDT_DATA_GATE(dpl, base, lim) 	({		\
+#define GDT_DATA_GATE(dpl, base, lim) ({		\
 	gdt_entry_t val;				\
 	val = (gdt_entry_t) { 				\
 	.limit  = lim & 0xFFFF,				\
@@ -67,14 +67,14 @@
 	val;						\
 })
 
-#define IDT_SET_GATE(base, sel, flags) ({		\
+#define IDT_SET_GATE(base) ({				\
 	idt_entry_t val;				\
 	val = (idt_entry_t) {				\
 	.base_lo = base & 0xFFFF,			\
 	.base_hi = base >> 16 & 0xFFFF,			\
-	.sel = sel,					\
+	.sel = 0x08,					\
 	.always0 = 0,					\
-	.flags = flags };				\
+	.flags = 0x8E };				\
 	val;						\
 })
 
