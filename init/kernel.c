@@ -1,6 +1,8 @@
 #include "multiboot.h"
 #include <stdio.h>
 #include <string.h>
+#include <kernel/types.h>
+#include <kernel/timer.h>
 #include <kernel/monitor.h>
 
 extern void init_descriptor_tables();
@@ -42,7 +44,7 @@ int kmain(multiboot_info_t *mbd, unsigned int magic) {
 
 	/* testing memset */
 
-	cs = 0x0000000000000000000000000000;
+	cs = 0x0;
 	printf("cs before memset: %s\n", cs);
 
 	cs = memset(cs, 'H', 14);
@@ -56,6 +58,11 @@ int kmain(multiboot_info_t *mbd, unsigned int magic) {
 
 	__asm__ __volatile__("int $0x3");
 	__asm__ __volatile__("int $0x4");
+
+	/* testing IRQs */
+
+	__asm__ __volatile__("sti");
+	init_timer(50);
 
 	return 0;
 }
