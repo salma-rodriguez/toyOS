@@ -43,28 +43,16 @@
 #define GRANULARITY(L) SEG_GRAN(1) 	| SEG_SIZE(1) | \
 			SEG_LONG(0)	| SEG_SAVL(0) | L
 
-#define GDT_CODE_GATE(dpl, base, lim) ({		\
-	gdt_entry_t val;				\
-	val = (gdt_entry_t) { 				\
-	.limit  = lim & 0xFFFF,				\
-	.base_l = base & 0xFFFF,			\
-	.base_m = base >> 0x10 & 0xFF,			\
-	.privge = GDT_CODE_PL(dpl),			\
-	.granty = GRANULARITY(0xF),			\
-	.base_h = base >> 0x18 & 0xFF };		\
-	val;						\
-})
-
-#define GDT_DATA_GATE(dpl, base, lim) ({		\
-	gdt_entry_t val;				\
-	val = (gdt_entry_t) { 				\
-	.limit  = lim & 0xFFFF,				\
-	.base_l = base & 0xFFFF,			\
-	.base_m = base >> 0x10 & 0xFF,			\
-	.privge = GDT_DATA_PL(dpl),			\
-	.granty = GRANULARITY(0xF),			\
-	.base_h = base >> 0x18 & 0xFF };		\
-	val;						\
+#define GDT_SET_GATE(dpl, flag, base, lim) ({			\
+	gdt_entry_t val;					\
+	val = (gdt_entry_t) { 					\
+	.limit  = lim & 0xFFFF,					\
+	.base_l = base & 0xFFFF,				\
+	.base_m = base >> 0x10 & 0xFF,				\
+	.privge = flag? GDT_DATA_PL(dpl): GDT_CODE_PL(dpl),	\
+	.granty = GRANULARITY(0xF),				\
+	.base_h = base >> 0x18 & 0xFF };			\
+	val;							\
 })
 
 #define IDT_SET_GATE(base) ({				\
@@ -83,5 +71,15 @@
 __u8 inb(__u16 port);
 __u16 inw(__u16 port);
 void outb(__u16 port, __u8 value);
+
+static inline void enable_interrupts()
+{
+	__asm__ __volatile__("sti");
+}
+
+static inline void disable_interrupts()
+{
+	__asm__ __volatile__("cli");
+}
 
 #endif /* _COMMON_H_*/
