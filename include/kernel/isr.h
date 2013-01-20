@@ -3,7 +3,7 @@
 
 #include <kernel/types.h>
 
-#define IRQ0 	32
+#define CLOCK 	32
 #define IRQ1 	33
 #define IRQ2	34
 #define IRQ3	35
@@ -19,10 +19,6 @@
 #define IRQ13	45
 #define IRQ14	46
 #define IRQ15	47
-
-#define MASTER	0x20
-#define SLAVE	0xA0
-
 
 typedef struct registers
 {
