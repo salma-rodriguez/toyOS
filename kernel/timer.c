@@ -17,7 +17,7 @@ void init_timer(uint32_t frequency)
 	uint8_t l, h;
 	uint32_t divisor;
 
-	register_interrupt_handler(IRQ0, timer_callback);
+	register_interrupt_handler(CLOCK, &timer_callback);
 
 	// Value sent to the PIT is to divide input clock
 	// (1193180 Hz) by to get frequency. Important note:
