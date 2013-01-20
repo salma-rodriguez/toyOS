@@ -96,7 +96,6 @@ IRQ    13,    45
 IRQ    14,    46
 IRQ    15,    47
 
-extern irq_handler
 extern isr_handler
 
 isr_common_stub:
@@ -123,6 +122,8 @@ isr_common_stub:
 	add esp, 8
 	sti
 	iret
+
+extern irq_handler
 
 irq_common_stub:
 	pusha
