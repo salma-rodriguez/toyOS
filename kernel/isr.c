@@ -26,9 +26,9 @@ void irq_handler(struct registers regs)
 	// Send an EOI signal to PICs.
 	// If this interrupt involved the slave:
 	if (regs.int_no >= 40)
-		outb(0xA0, 0x20);
+		outportb(0xA0, 0x20);
 	// Send reset signal to master, regardless.
-	outb(0x20, 0x20);
+	outportb(0x20, 0x20);
 
 	if (interrupt_handlers[regs.int_no])
 	{
