@@ -22,13 +22,13 @@ static void move_cursor()
 	// Determin location of cursor on the screen
 	loc = c_y * 80 + c_x;
 	// Send command to VGA board for high cursor byte
-	outb(0x3D4, 14);
+	outportb(0x3D4, 14);
 	// Send the high cursor byte, right shifted by 8
-	outb(0x3D5, loc >> 8);
+	outportb(0x3D5, loc >> 8);
 	// Prepare VGA for setting the low cursor byte
-	outb(0x3D4, 15);
+	outportb(0x3D4, 15);
 	// Send the low cursor byte
-	outb(0x3D5, loc);
+	outportb(0x3D5, loc);
 }
 
 // Scroll the text on the screen up by one line
