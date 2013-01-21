@@ -1,10 +1,7 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#ifndef _TYPES_H_
-#define _TYPES_H_
 #include <kernel/types.h>
-#endif
 
 #ifndef SEGMENT_FLAGS
 #define SEGMENT_FLAGS
@@ -49,9 +46,9 @@
 	.limit  = lim & 0xFFFF,					\
 	.base_l = base & 0xFFFF,				\
 	.base_m = base >> 0x10 & 0xFF,				\
+	.base_h = base >> 0x18 & 0xFF,				\
 	.privge = flag? GDT_DATA_PL(dpl): GDT_CODE_PL(dpl),	\
-	.granty = GRANULARITY(0xF),				\
-	.base_h = base >> 0x18 & 0xFF };			\
+	.granty = GRANULARITY(0xF) };				\
 	val;							\
 })
 
@@ -68,9 +65,9 @@
 
 #endif /* SEGMENT_FLAGS */
 
-__u8 inb(__u16 port);
-__u16 inw(__u16 port);
-void outb(__u16 port, __u8 value);
+__u8 inportb(__u16 port);
+__u16 inportw(__u16 port);
+void outportb(__u16 port, __u8 value);
 
 static inline void enable_interrupts()
 {
@@ -80,6 +77,11 @@ static inline void enable_interrupts()
 static inline void disable_interrupts()
 {
 	__asm__ __volatile__("cli");
+}
+
+static inline void start_system_timer()
+{
+	__asm__ __volatile__("int $0x08");
 }
 
 #endif /* _COMMON_H_*/
