@@ -1,5 +1,5 @@
+#include <asm/common.h>
 #include <kernel/types.h>
-#include <kernel/common.h>
 #include <kernel/monitor.h>
 
 #define BGCOLOR GREEN
@@ -18,15 +18,20 @@ __u16 *video_memory = (__u16 *)0xB8000;
 static void move_cursor()
 {
 	__u16 loc;
+
 	// Working with 80-character screen
 	// Determin location of cursor on the screen
 	loc = c_y * 80 + c_x;
+
 	// Send command to VGA board for high cursor byte
 	outportb(0x3D4, 14);
+
 	// Send the high cursor byte, right shifted by 8
 	outportb(0x3D5, loc >> 8);
+
 	// Prepare VGA for setting the low cursor byte
 	outportb(0x3D4, 15);
+
 	// Send the low cursor byte
 	outportb(0x3D5, loc);
 }
@@ -47,7 +52,7 @@ static void scroll()
 		// Move screen text back in the buffer by a line
 		int i;
 		for (i = 0*80; i < area; i++)
-			video_memory[i] = video_memory[i+80];
+			video_memory[i] = video_memory[i + 80];
 
 		// Last line should be blank.
 		// Write 80 spaces to it.
@@ -64,7 +69,8 @@ void monitor_clear()
 	__u16 blank;
 	__u8 attribyte;
 
-	area = 24*80;
+	area = 24 * 80;
+
 	// Make an attribute byte for the default colors
 	attribyte = (BGCOLOR << 4) | (FGCOLOR & 0x0F);
 	blank = 0x20 | (attribyte << 8);
@@ -97,14 +103,15 @@ void monitor_put(char c)
 	attribute = attribyte << 8;
 
 	// Backspace is handled by moving cursor back one space.
-	if (c == 0x08 && c_x)
-		c_x--;
+	if (c == 0x08 && c_x) c_x--;
+
 	/* 
 	 * Tab is handled by moving cursor by TABSTOP bytes,
 	 * where TABSTOP is a multiple of 8.
 	 */
 	else if (c == 0x09) 
 		c_x = (c_x+TABSTOP) & ~(TABSTOP-1);
+
 	// Handle a carriage return
 	else if (c == '\r')
 		c_x = 0;
@@ -116,9 +123,10 @@ void monitor_put(char c)
 		c_x = 0;
 		c_y++;
 	}
+
 	// Handle any other printable character.
 	else if (c >= ' ') {
-		location = video_memory + (c_y*80 + c_x);
+		location = video_memory + (c_y * 80 + c_x);
 		*location = c | attribute;
 		c_x++;
 	}
@@ -133,6 +141,7 @@ void monitor_put(char c)
 
 	// Scroll screen if necessary
 	scroll();
+
 	// Move the hardware cursor.
 	move_cursor();
 }

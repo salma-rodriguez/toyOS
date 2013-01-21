@@ -20,7 +20,7 @@
 #define IRQ14	46
 #define IRQ15	47
 
-typedef struct registers
+struct registers
 {
 	uint32_t ds;
 	uint32_t edi;

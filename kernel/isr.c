@@ -1,7 +1,7 @@
 #include <stdio.h>
+#include <asm/common.h>
 #include <kernel/isr.h>
 #include <kernel/types.h>
-#include <kernel/common.h>
 
 isr_t interrupt_handlers[256];
 
@@ -23,10 +23,12 @@ void irq_handler(struct registers regs)
 {
 	isr_t handler;
 
-	// Send an EOI signal to PICs.
+	// Send an EOI signal to PICs
+
 	// If this interrupt involved the slave:
 	if (regs.int_no >= 40)
 		outportb(0xA0, 0x20);
+
 	// Send reset signal to master, regardless.
 	outportb(0x20, 0x20);
 
@@ -40,6 +42,6 @@ void irq_handler(struct registers regs)
 void register_interrupt_handler(uint8_t n, isr_t handler)
 {
 	if (interrupt_handlers[n])
-		printf("Overriding interrupt handler: %d\n", n);
+		printf("Overriding interrupt handler: %d\n.", n);
 	interrupt_handlers[n] = handler;
 }

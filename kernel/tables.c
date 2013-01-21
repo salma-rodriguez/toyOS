@@ -1,9 +1,9 @@
 #include <string.h>
-#include <kernel/types.h>
-#include <asm/segment.h>
+#include <asm/common.h>
 #include <asm/interrupt.h>
+#include <kernel/types.h>
+#include <kernel/tables.h>
 #include <kernel/isr.h>
-#include <kernel/common.h>
 
 #define CODE	0
 #define DATA	1
@@ -11,7 +11,7 @@
 #define NOINTS	256
 #define MAXADDR 0xFFFFFFFF
 
-#define IDT(isrnum) idt_set_gate(isrnum, (uint32_t)isr##isrnum)
+#define ISR(isrnum) idt_set_gate(isrnum, (uint32_t)isr##isrnum)
 #define IRQ(num, irqnum) idt_set_gate(num, (uint32_t)irq##irqnum)
 
 static void gdt_init();
@@ -26,10 +26,8 @@ static inline void gdt_set_gate(uint8_t, uint8_t, uint8_t,
 
 extern isr_t interrupt_handlers[];
 
-gdt_entry_t gdt_entries[5];
-gdt_ptr_t   gdt_ptr;
-idt_entry_t idt_entries[NOINTS];
-idt_ptr_t   idt_ptr;
+gdt_page_t  gdt_page;
+idt_page_t  idt_page;
 
 void init_descriptor_tables()
 {
@@ -41,16 +39,16 @@ void init_descriptor_tables()
 
 static void gdt_init()
 {
-	gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
-	gdt_ptr.base = (uint32_t)&gdt_entries;
-	
 	gdt_set_gate(0, 0, 0, 0, 0);
 	gdt_set_gate(1, 0, CODE, 0, MAXADDR);
 	gdt_set_gate(2, 0, DATA, 0, MAXADDR);
 	gdt_set_gate(3, 3, CODE, 0, MAXADDR);
 	gdt_set_gate(4, 3, DATA, 0, MAXADDR);
+
+	gdt_page.gdt_ptr.base = (uint32_t)&gdt_page.gdt;
+	gdt_page.gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
 	
-	gdt_flush((uint32_t)&gdt_ptr);
+	gdt_flush((uint32_t)&gdt_page.gdt_ptr);
 }
 
 static void remap_irq_table()
@@ -69,52 +67,45 @@ static void remap_irq_table()
 
 static void idt_init()
 {
-	int i, j;
-	idt_ptr.limit = sizeof(idt_entry_t) * NOINTS - 1;
-	idt_ptr.base  = (uint32_t)&idt_entries;
+	idt_page.idt_ptr.base  = (uint32_t)&idt_page.idt;
+	idt_page.idt_ptr.limit = sizeof(idt_entry_t) * NOINTS - 1;
 
-	memset(&idt_entries, 0, sizeof(idt_entry_t) * NOINTS);
+	memset(&idt_page.idt, 0, sizeof(idt_entry_t) * IDT_ENTRIES);
 
-	// Remap irq table
-	
 	remap_irq_table();
-		
-	// for (i = 0; i < 32; ++i)
 	
-	IDT(1);
-	IDT(2);
-	IDT(3);
-	IDT(4);
-	IDT(5);
-	IDT(6);
-	IDT(7);
-	IDT(8);
-	IDT(9);
-	IDT(10);
-	IDT(11);
-	IDT(12);
-	IDT(13);
-	IDT(14);
-	IDT(15);
-	IDT(16);
-	IDT(17);
-	IDT(18);
-	IDT(19);
-	IDT(20);
-	IDT(21);
-	IDT(22);
-	IDT(23);
-	IDT(24);
-	IDT(25);
-	IDT(26);
-	IDT(27);
-	IDT(28);
-	IDT(29);
-	IDT(30);
-	IDT(31);
-
-	// for (j = 0; j < 16; ++i, ++j) IRQ(i, j);
-	
+	ISR(0);
+	ISR(1);
+	ISR(2);
+	ISR(3);
+	ISR(4);
+	ISR(5);
+	ISR(6);
+	ISR(7);
+	ISR(8);
+	ISR(9);
+	ISR(10);
+	ISR(11);
+	ISR(12);
+	ISR(13);
+	ISR(14);
+	ISR(15);
+	ISR(16);
+	ISR(17);
+	ISR(18);
+	ISR(19);
+	ISR(20);
+	ISR(21);
+	ISR(22);
+	ISR(23);
+	ISR(24);
+	ISR(25);
+	ISR(26);
+	ISR(27);
+	ISR(28);
+	ISR(29);
+	ISR(30);
+	ISR(31);
 	IRQ(32, 0);
 	IRQ(33, 1);
 	IRQ(34, 2);
@@ -132,16 +123,16 @@ static void idt_init()
 	IRQ(46, 14);
 	IRQ(47, 15);
 
-	idt_flush((uint32_t)&idt_ptr);
+	idt_flush((uint32_t)&idt_page.idt_ptr);
 }
 
 static inline void gdt_set_gate(uint8_t num, uint8_t privilege, 
 		uint8_t type, uint32_t base, uint32_t limit)
 {
-	gdt_entries[num] = GDT_SET_GATE(privilege, type, base, limit);
+	gdt_page.gdt[num] = GDT_SET_GATE(privilege, type, base, limit);
 }
 
 static inline void idt_set_gate(uint8_t num, uint32_t base)
 {
-	idt_entries[num] = IDT_SET_GATE(base);
+	idt_page.idt[num] = IDT_SET_GATE(base);
 }

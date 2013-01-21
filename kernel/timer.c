@@ -1,6 +1,6 @@
 #include <stdio.h>
+#include <asm/common.h>
 #include <kernel/types.h>
-#include <kernel/common.h>
 #include <kernel/isr.h>
 #include <kernel/timer.h>
 
@@ -9,7 +9,7 @@ uint32_t tick = 0;
 void timer_callback(struct registers regs)
 {
 	tick++;
-	// printf("Tick: %d\n", tick);
+	printf("Tick: %d\n", tick);
 }
 
 void init_timer(uint32_t frequency)
