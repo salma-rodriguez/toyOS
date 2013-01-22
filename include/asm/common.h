@@ -19,12 +19,12 @@ static inline void do_eoi()
 
 static inline void enable_interrupts()
 {
-	__asm__ __volatile__("sti");
+	__asm__ __volatile__ ("sti");
 }
 
 static inline void disable_interrupts()
 {
-	__asm__ __volatile__("cli");
+	__asm__ __volatile__ ("cli");
 }
 
 // this is a double fault, really
@@ -32,7 +32,7 @@ static inline void disable_interrupts()
 
 static inline void start_system_timer()
 {
-	__asm__ __volatile__("int $0x08");
+	__asm__ __volatile__ ("int $0x08");
 }
 
 #endif /* _COMMON_H_*/
