@@ -34,7 +34,7 @@ void init_descriptor_tables()
 	gdt_init();
 	idt_init();
 
-	memset(&interrupt_handlers, 0, sizeof(isr_t)*NOINTS);
+	memset(&interrupt_handlers, 0, sizeof(isr_t)*IDT_ENTRIES);
 }
 
 static void gdt_init()
@@ -68,7 +68,7 @@ static void remap_irq_table()
 static void idt_init()
 {
 	idt_page.idt_ptr.base  = (uint32_t)&idt_page.idt;
-	idt_page.idt_ptr.limit = sizeof(idt_entry_t) * NOINTS - 1;
+	idt_page.idt_ptr.limit = sizeof(idt_entry_t) * IDT_ENTRIES - 1;
 
 	memset(&idt_page.idt, 0, sizeof(idt_entry_t) * IDT_ENTRIES);
 
