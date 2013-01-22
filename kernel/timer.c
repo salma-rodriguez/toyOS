@@ -4,6 +4,8 @@
 #include <kernel/isr.h>
 #include <kernel/timer.h>
 
+#define CLOCK IRQ0
+
 uint32_t tick = 0;
 
 void timer_callback(struct registers regs)
@@ -11,6 +13,8 @@ void timer_callback(struct registers regs)
 	tick++;
 	printf("Tick: %d\n", tick);
 }
+
+/* timer is not working properly */
 
 void init_timer(uint32_t frequency)
 {
@@ -34,8 +38,4 @@ void init_timer(uint32_t frequency)
 	// Send the frequency divisor.
 	outportb(0x40, l);
 	outportb(0x40, h);
-	
-	// start ticking
-	enable_interrupts();
-	start_system_timer();
 }
