@@ -25,5 +25,11 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 
 	init_timer(50);
 
+	enable_interrupts();
+
+	// this generates a protection fault,
+	// but it's the only way to get the clock to tick for now
+	start_system_timer();
+
 	return 0;
 }
