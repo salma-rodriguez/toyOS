@@ -32,4 +32,6 @@ SECTIONS {
 		*(.bss)
 		ebss = .;
 	}
+
+	end = .;
 }
