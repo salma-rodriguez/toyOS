@@ -8,11 +8,16 @@
 #define PICS 0xA0
 #define PICM 0x20
 
-__u8 inportb(__u16 port);
-__u16 inportw(__u16 port);
-void outportb(__u16 port, __u8 value);
+extern __u8 inportb(__u16 port);
+extern __u16 inportw(__u16 port);
+extern void outportb(__u16 port, __u8 value);
 
-static inline void do_eoi()
+static inline void send_eoi_slave()
+{
+	outportb(PICS, EOI);
+}
+
+static inline void send_eoi_master()
 {
 	outportb(PICM, EOI);
 }
@@ -25,14 +30,6 @@ static inline void enable_interrupts()
 static inline void disable_interrupts()
 {
 	__asm__ __volatile__ ("cli");
-}
-
-// this is a double fault, really
-// why does it work? I have no idea.
-
-static inline void start_system_timer()
-{
-	__asm__ __volatile__ ("int $0x08");
 }
 
 #endif /* _COMMON_H_*/
