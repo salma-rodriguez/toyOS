@@ -14,8 +14,6 @@ void timer_callback(struct registers regs)
 	printf("Tick: %d\n", tick);
 }
 
-/* timer is not working properly */
-
 void init_timer(uint32_t frequency)
 {
 	uint8_t l, h;
