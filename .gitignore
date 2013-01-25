@@ -1,4 +1,4 @@
 *.o
 *.iso
-kernel
 *.bochsout
+kernel.bin
