@@ -25,7 +25,7 @@ SOURCES += monitor.c kernel.c
 # under kernel
 SOURCES += isr.c tables.c timer.c common.c panic.c bug.c
 # under mm
-SOURCES += frame.c slab.c
+SOURCES += page.c slab.c
 
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
