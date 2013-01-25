@@ -14,7 +14,6 @@ extern uint32_t placement_addr;
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
 
-// struct page_directory *kernel_directory;
 struct page_directory *current_directory;
 
 static void set_frame(uint32_t frame_addr)
