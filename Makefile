@@ -1,7 +1,7 @@
 CC	= gcc
 AS 	= nasm
 LD	= ld
-BUILD	= kernel
+BUILD	= kernel.bin
 CFLAGS	= -Wall -m32 -c -I./include -nostdlib -mno-sse \
 	  -nostartfiles -nodefaultlibs -nostdinc -fno-builtin \
 	  -fno-stack-protector
