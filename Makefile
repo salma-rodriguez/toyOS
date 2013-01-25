@@ -11,7 +11,7 @@ ASFLAGS	= -felf
 BIN	= bin
 TARGET	= $(BIN)/$(BUILD)
 
-VPATH	= boot lib init kernel
+VPATH	= boot lib init kernel mm
 MKDIR	= $(CURDIR)/$(BIN)
 
 # under boot
@@ -21,9 +21,11 @@ ASSRCS  += interrupt.s
 # under lib
 SOURCES += string.c ctype.c printf.c
 # under init
-SOURCES += common.c monitor.c kernel.c
+SOURCES += monitor.c kernel.c
 # under kernel
-SOURCES += isr.c tables.c timer.c
+SOURCES += isr.c tables.c timer.c common.c panic.c bug.c
+# under mm
+SOURCES += frame.c slab.c
 
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
