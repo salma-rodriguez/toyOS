@@ -3,33 +3,32 @@
 #include <asm/common.h>
 #include <kernel/types.h>
 #include <kernel/timer.h>
+#include <kernel/panic.h>
 #include <kernel/monitor.h>
+#include <kernel/paging.h>
 
 extern void init_descriptor_tables();
 
 int kmain(multiboot_info_t *mbd, uint32_t magic) {
 
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-		printf("boot magic is incorrect");
-		/* next: do something, like PANIC */
+		PANIC("boot pagic is incorrect\n");
 	}
 
 	monitor_clear();
 
-	/* initialize discriptor tables */
+	disable_interrupts();
 
 	init_descriptor_tables();
-
-	// __asm__ __volatile__("int $0x03");
-	// __asm__ __volatile__("int $0x04");
-
 	init_timer(50);
+	init_paging();
 
 	enable_interrupts();
+	
+	// uint32_t *ptr = (uint32_t *)0xA0000000;
+	// uint32_t do_page_fault = *ptr;
 
-	// this generates a protection fault,
-	// but it's the only way to get the clock to tick for now
-	start_system_timer();
+	while(1);
 
 	return 0;
 }
