@@ -9,12 +9,9 @@ void isr_handler(struct registers regs)
 {
 	isr_t handler;
 
-	// if (regs.int_no != 13)
-		printf("recieved interrupt: %d\n", regs.int_no);
+	printf("recieved interrupt: %d\n", regs.int_no);
 
-	// else /* general protection fault; why? */
-	
-	do_eoi();
+	send_eoi_master();
 
 	if (interrupt_handlers[regs.int_no])
 	{
@@ -31,10 +28,10 @@ void irq_handler(struct registers regs)
 
 	// If this interrupt involved the slave:
 	if (regs.int_no >= 40)
-		outportb(PICS, EOI);
+		send_eoi_slave();
 
 	// Send EOI signal to master, regardless.
-	outportb(PICM, EOI);
+	send_eoi_master();
 
 	if (interrupt_handlers[regs.int_no])
 	{
