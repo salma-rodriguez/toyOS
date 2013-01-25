@@ -1,7 +1,7 @@
-#ifndef _SPRINT_H_
-#define _SPRINT_H_
+#ifndef _STDIO_H_
+#define _STDIO_H_
 
-#include<stdarg.h>
+#include <stdarg.h>
 
 extern int vsprintf(char *buf, const char *fmt, va_list args);
 extern int sprintf(char *buf, const char *fmt, ...);
