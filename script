@@ -31,7 +31,7 @@ rm -f pad
 
 function add_kernel {
 make > /dev/null 2>&1
-cat bin/kernel >> $DISK \
+cat bin/kernel.bin >> $DISK \
 	> /dev/null 2>&1
 }
 
