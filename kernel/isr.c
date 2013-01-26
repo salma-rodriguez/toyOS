@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include <asm/common.h>
 #include <kernel/isr.h>
 #include <kernel/types.h>
+#include <kernel/printk.h>
 
 isr_t interrupt_handlers[256];
 
@@ -9,7 +9,7 @@ void isr_handler(struct registers regs)
 {
 	isr_t handler;
 
-	printf("recieved interrupt: %d\n", regs.int_no);
+	printk("recieved interrupt: %d\n", regs.int_no);
 
 	send_eoi_master();
 
@@ -43,6 +43,6 @@ void irq_handler(struct registers regs)
 void register_interrupt_handler(uint8_t n, isr_t handler)
 {
 	if (interrupt_handlers[n])
-		printf("Overriding interrupt handler: %d\n.", n);
+		printk("overriding interrupt handler: %d\n.", n);
 	interrupt_handlers[n] = handler;
 }

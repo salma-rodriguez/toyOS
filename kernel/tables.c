@@ -4,9 +4,11 @@
 #include <kernel/types.h>
 #include <kernel/tables.h>
 #include <kernel/isr.h>
+#include <kernel/printk.h>
 
 #define CODE	0
 #define DATA	1
+#define DEBUG	1
 
 #define NOINTS	256
 #define MAXADDR 0xFFFFFFFF
@@ -31,10 +33,14 @@ idt_page_t  idt_page;
 
 void init_descriptor_tables()
 {
+	DPRINTK("descriptor tables...\t");
+
 	gdt_init();
 	idt_init();
 
 	memset(&interrupt_handlers, 0, sizeof(isr_t)*IDT_ENTRIES);
+
+	DPRINTK("done!\n");
 }
 
 static void gdt_init()
