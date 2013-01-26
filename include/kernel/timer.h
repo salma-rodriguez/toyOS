@@ -3,6 +3,8 @@
 
 #include <kernel/types.h>
 
+#define PIT_FREQUENCY 50
+
 void init_timer(uint32_t frequency);
 
 #endif
