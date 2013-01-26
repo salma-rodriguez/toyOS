@@ -1,10 +1,10 @@
-#include <stdio.h>
 #include <string.h>
+#include <asm/page.h>
 #include <kernel/isr.h>
 #include <kernel/types.h>
 #include <kernel/kheap.h>
-#include <kernel/paging.h>
 #include <kernel/panic.h>
+#include <kernel/printk.h>
 
 uint32_t *frames;
 uint32_t nframes;
@@ -14,31 +14,32 @@ extern uint32_t placement_addr;
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
 
+struct page_directory *kernel_directory;
 struct page_directory *current_directory;
 
 static void set_frame(uint32_t frame_addr)
 {
-	uint32_t frame = frame_addr/0x1000;
+	uint32_t frame = frame_addr/PAGE_SIZ;
 	uint32_t idx = INDEX_FROM_BIT(frame);
 	uint32_t off = OFFSET_FROM_BIT(frame);
 	frames[idx] |= (0x1 << off);
 }
 
-static void clear_frame(uint32_t frame_addr)
+/* static void clear_frame(uint32_t frame_addr)
 {
-	uint32_t frame = frame_addr/0x1000;
+	uint32_t frame = frame_addr/PAGE_SIZ;
 	uint32_t idx = INDEX_FROM_BIT(frame);
 	uint32_t off = OFFSET_FROM_BIT(frame);
 	frames[idx] &= ~(0x1 << off);
-}
+} */
 
-static uint32_t test_frame(uint32_t frame_addr)
+/* static uint32_t test_frame(uint32_t frame_addr)
 {
-	uint32_t frame = frame_addr/0x1000;
+	uint32_t frame = frame_addr/PAGE_SIZ;
 	uint32_t idx = INDEX_FROM_BIT(frame);
 	uint32_t off = OFFSET_FROM_BIT(frame);
 	return (frames[idx] & (0x1  << off));
-}
+} */
 
 static uint32_t first_frame()
 {
@@ -62,7 +63,7 @@ void alloc_frame(struct page *page, int kernel, int writable)
 		idx = first_frame();
 		if (idx == (uint32_t)-1)
 			PANIC("No free frames!");
-		set_frame(idx*0x1000);
+		set_frame(idx*PAGE_SIZ);
 		page->present = 1;
 		page->rw = writable;
 		page->user = kernel;
@@ -70,57 +71,54 @@ void alloc_frame(struct page *page, int kernel, int writable)
 	}
 }
 
-void free_frame(struct page *page)
+/* void free_frame(struct page *page)
 {
 	uint32_t frame;
 	if (!(frame = page->frame))
 		return;
 	else {
 		clear_frame(frame);
-		page->frame = 0x0;
+		page->frame = 0x00000;
 	}
-}
+} */
 
 void init_paging()
 {
+	ssize_t sz;
 	uint32_t i;
 	uint32_t mem_end_page;
-	struct page_directory *kernel_directory;
+
+	DPRINTK("paging...\t");
 
 	mem_end_page = 0x1000000;
-	nframes = mem_end_page / 0x1000;
-	frames = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes));
-	memset(frames, 0, INDEX_FROM_BIT(nframes));
+	sz = INDEX_FROM_BIT(nframes);
+	nframes = mem_end_page / PAGE_SIZ;
+	frames = (uint32_t *)kmalloc(sz);
+	memset(frames, 0, sz);
 
-	kernel_directory = (struct page_directory *)kmalloc_a(sizeof(struct page_directory));
+	kernel_directory = (struct page_directory *)
+		kmalloc_a(sizeof(struct page_directory));
 	memset(kernel_directory, 0, sizeof(struct page_directory));
 	current_directory = kernel_directory;
 
 	i = 0;
 	while (i < placement_addr) {
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
-		i += 0x1000;
+		i += PAGE_SIZ;
 	}
 
-	register_interrupt_handler(14, (isr_t)page_fault);
+	register_interrupt_handler(14, (isr_t)handle_page_fault);
 	switch_page_directory(kernel_directory);
-}
+	enable_paging();
 
-void switch_page_directory(struct page_directory *dir)
-{
-	uint32_t cr0;
-	current_directory = dir;
-	asm volatile("mov %0, %%cr3":: "r" (&dir->tables_physical));
-	// asm volatile("mov %%cr0, %0": "=r" (cr0));
-	// cr0 |= 0x80000000;
-	// asm volatile("mov %0, %%cr0":: "r" (cr0));
+	DPRINTK("done!\n");
 }
 
 struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
 {
 	uint32_t temp;
 	uint32_t table_idx;
-	address /= 0x1000;
+	address /= PAGE_SIZ;
 	table_idx = address / 1024;
 	if (dir->tables[table_idx])
 		return &dir->tables[table_idx]->pages[address%1024];
@@ -129,11 +127,11 @@ struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
 		memset(dir->tables[table_idx], 0, 0x1000);
 		dir->tables_physical[table_idx] = temp | 0x7;
 		return &dir->tables[table_idx]->pages[address%1024];
-	} else
-		return 0;
+	}
+	return NULL;
 }
 
-void page_fault(struct registers regs)
+void handle_page_fault(struct registers regs)
 {
 	int rw;
 	int id;
@@ -141,8 +139,6 @@ void page_fault(struct registers regs)
 	int present;
 	int reserved;
 	uint32_t faulting_address;
-
-	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
 	
 	present = !(regs.err_code & 0x1);
 	rw = regs.err_code & 0x2;
@@ -150,9 +146,13 @@ void page_fault(struct registers regs)
 	reserved = regs.err_code & 0x8;
 	id = regs.err_code & 0x10;
 
-	printf("Page fault! ( %s %s %s %s ) at 0x%lx\n",
+	faulting_address = get_faulting_address();
+
+	printk("page fault (%s %s %s %s %s) at 0x%lx\n",
 		id? "instruction fetch":"",
-		present? "present":"", rw? "read-only":"",
-		usr? "user-mode":"", reserved? "reserved":"");
+		present? "present":"", rw? "read-write":"",
+		usr? "user-mode":"", reserved? "reserved":"",
+		faulting_address);
+
 	PANIC("page fault");
 }
