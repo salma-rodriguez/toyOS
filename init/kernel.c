@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include "multiboot.h"
+#include <asm/page.h>
 #include <asm/common.h>
 #include <kernel/types.h>
 #include <kernel/timer.h>
 #include <kernel/panic.h>
 #include <kernel/monitor.h>
-#include <kernel/paging.h>
 
 extern void init_descriptor_tables();
 
@@ -20,8 +20,8 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 	disable_interrupts();
 
 	init_descriptor_tables();
-	init_timer(50);
-	init_paging();
+	init_timer(PIT_FREQUENCY);
+	// init_paging();
 
 	enable_interrupts();
 	
