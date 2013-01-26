@@ -33,12 +33,12 @@ struct page_directory
 
 static inline void enable_paging()
 {
-	register int paging_flag;
-	paging_flag = PAGING_FLAG;
+	register int flag;
+	flag = PAGING_FLAG;
 	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
 			      "orl %0, %%eax\n\t"
 			      "movl %%eax, %%cr0"
-			      :: "r" (paging_flag));
+			      :: "r" (flag));
 }
 
 static inline __u32 get_faulting_address()
