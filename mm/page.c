@@ -19,9 +19,10 @@ struct page_directory *current_directory;
 
 static void set_frame(uint32_t frame_addr)
 {
-	uint32_t frame = frame_addr/PAGE_SIZ;
-	uint32_t idx = INDEX_FROM_BIT(frame);
-	uint32_t off = OFFSET_FROM_BIT(frame);
+	uint32_t idx, off, frame;
+	frame = frame_addr/PAGE_SIZ;
+	idx = INDEX_FROM_BIT(frame);
+	off = OFFSET_FROM_BIT(frame);
 	frames[idx] |= (0x1 << off);
 }
 
@@ -84,15 +85,16 @@ void alloc_frame(struct page *page, int kernel, int writable)
 
 void init_paging()
 {
-	ssize_t sz;
+	size_t sz;
 	uint32_t i;
 	uint32_t mem_end_page;
 
-	DPRINTK("paging...\t");
+	printk("paging...\t\t");
 
 	mem_end_page = 0x1000000;
-	sz = INDEX_FROM_BIT(nframes);
 	nframes = mem_end_page / PAGE_SIZ;
+
+	sz = INDEX_FROM_BIT(nframes);
 	frames = (uint32_t *)kmalloc(sz);
 	memset(frames, 0, sz);
 
@@ -107,11 +109,10 @@ void init_paging()
 		i += PAGE_SIZ;
 	}
 
-	register_interrupt_handler(14, (isr_t)handle_page_fault);
 	switch_page_directory(kernel_directory);
 	enable_paging();
 
-	DPRINTK("done!\n");
+	printk("done!\n");
 }
 
 struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
@@ -131,7 +132,7 @@ struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
 	return NULL;
 }
 
-void handle_page_fault(struct registers regs)
+void handle_page_fault(struct registers *regs)
 {
 	int rw;
 	int id;
@@ -140,11 +141,11 @@ void handle_page_fault(struct registers regs)
 	int reserved;
 	uint32_t faulting_address;
 	
-	present = !(regs.err_code & 0x1);
-	rw = regs.err_code & 0x2;
-	usr = regs.err_code & 0x4;
-	reserved = regs.err_code & 0x8;
-	id = regs.err_code & 0x10;
+	present = !(regs->err_code & 0x1);
+	rw = regs->err_code & 0x2;
+	usr = regs->err_code & 0x4;
+	reserved = regs->err_code & 0x8;
+	id = regs->err_code & 0x10;
 
 	faulting_address = get_faulting_address();
 
