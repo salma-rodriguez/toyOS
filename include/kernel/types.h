@@ -26,14 +26,8 @@ typedef 	__u16 	uint16_t;
 typedef 	__u32 	uint32_t;
 typedef		__u64	uint64_t;
 
-#ifndef _SIZE_T
-#define _SIZE_T
-typedef unsigned int size_t;
-#endif
-
-#ifndef _SSIZE_T
-#define _SSIZE_T
 typedef int ssize_t;
-#endif
+typedef unsigned int size_t;
+typedef unsigned int off_t;
 
 #endif
