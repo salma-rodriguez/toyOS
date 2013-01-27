@@ -23,7 +23,7 @@ SOURCES += string.c ctype.c printf.c
 # under init
 SOURCES += monitor.c kernel.c
 # under kernel
-SOURCES += isr.c tables.c timer.c common.c panic.c bug.c
+SOURCES += isr.c tables.c timer.c common.c panic.c bug.c handler.c
 # under mm
 SOURCES += page.c slab.c
 
