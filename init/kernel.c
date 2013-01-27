@@ -2,10 +2,13 @@
 #include "multiboot.h"
 #include <asm/page.h>
 #include <asm/common.h>
+#include <kernel/isr.h>
 #include <kernel/types.h>
 #include <kernel/timer.h>
 #include <kernel/panic.h>
 #include <kernel/monitor.h>
+#include <kernel/printk.h>
+#include <kernel/handler.h>
 
 extern void init_descriptor_tables();
 
@@ -19,14 +22,25 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 
 	disable_interrupts();
 
+	printk("initializing...\n");
+
 	init_descriptor_tables();
+	init_irq_handlers();
+	init_fault_handlers();
 	init_timer(PIT_FREQUENCY);
-	// init_paging();
+	init_paging();
 
 	enable_interrupts();
 	
+	// page fault handler not working
+	
 	// uint32_t *ptr = (uint32_t *)0xA0000000;
 	// uint32_t do_page_fault = *ptr;
+
+	// testing devision by zero
+	
+	int i;
+	i = 500 / 0;
 
 	while(1);
 
