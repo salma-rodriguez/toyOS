@@ -19,7 +19,8 @@ struct page_directory *current_directory;
 
 static void set_frame(uint32_t frame_addr)
 {
-	uint32_t idx, off, frame;
+	off_t off;
+	uint32_t idx, frame;
 	frame = frame_addr/PAGE_SIZ;
 	idx = INDEX_FROM_BIT(frame);
 	off = OFFSET_FROM_BIT(frame);
@@ -125,7 +126,7 @@ struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
 		return &dir->tables[table_idx]->pages[address%1024];
 	else if(creat) {
 		dir->tables[table_idx] = (struct page_table *)kmalloc_ap(sizeof(struct page_table), &temp);
-		memset(dir->tables[table_idx], 0, 0x1000);
+		memset(dir->tables[table_idx], 0, PAGE_SIZ);
 		dir->tables_physical[table_idx] = temp | 0x7;
 		return &dir->tables[table_idx]->pages[address%1024];
 	}
