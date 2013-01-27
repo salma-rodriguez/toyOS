@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include <stdarg.h>
 #include <kernel/panic.h>
+#include <kernel/printk.h>
 #include <asm/common.h>
 
 void panic(const char * fmt, ...)
@@ -14,7 +14,7 @@ void panic(const char * fmt, ...)
 	vsprintf(buf, fmt, args);
 	va_end(args);
 
-	printf("kernel panic - not syncing: %s\n", buf);
+	printk("kernel panic - not syncing: %s\n", buf);
 
 	while(1);
 }
