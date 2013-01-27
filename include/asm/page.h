@@ -33,24 +33,22 @@ struct page_directory
 
 static inline void enable_paging()
 {
-	register int flag;
-	flag = PAGING_FLAG;
 	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
 			      "orl %0, %%eax\n\t"
 			      "movl %%eax, %%cr0"
-			      :: "r" (flag));
+			      :: "r" (PAGING_FLAG) : "memory");
 }
 
 static inline __u32 get_faulting_address()
 {
 	__u32 faulting_address;
-	__asm__ __volatile__ ("mov %%cr2, %0" : "=r" (faulting_address));
+	__asm__ __volatile__ ("movl %%cr2, %0" : "=r" (faulting_address));
 	return faulting_address;
 }
 
 static inline void switch_page_directory(struct page_directory *dir)
 {
-	__asm__ __volatile__ ("mov %0, %%cr3" :: "r" (dir->tables_physical));
+	__asm__ __volatile__ ("movl %0, %%cr3" :: "r" (dir->tables_physical));
 }
 
 static inline void flush_tlb_single(__u32 addr)
@@ -61,15 +59,14 @@ static inline void flush_tlb_single(__u32 addr)
 static inline void flush_tlb()
 {
 	__u32 page_dir_addr;
-	__asm__ __volatile__ ("mov %%cr3, %0" : "=r" (page_dir_addr));
-	__asm__ __volatile__ ("mov %0, %%cr3" :: "r" (page_dir_addr));
+	__asm__ __volatile__ ("movl %%cr3, %0" : "=r" (page_dir_addr));
+	__asm__ __volatile__ ("movl %0, %%cr3" :: "r" (page_dir_addr));
 }
-
 
 extern struct page_directory *current_directory;
 
 void init_paging();
-void handle_page_fault(struct registers regs);
+void handle_page_fault(struct registers *regs);
 struct page *get_page(uint32_t address, int creat, struct page_directory *dir);
 
 #endif /* _PAGE_H_ */
