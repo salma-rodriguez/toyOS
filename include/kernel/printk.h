@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define printk(s, args...) printf(s, ##args)
 
