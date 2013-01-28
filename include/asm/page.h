@@ -7,11 +7,15 @@
 
 #define PAGE_SIZ (1 << 12)
 
-#define PRESENT_FLAG		(1 << 0)
-#define RW_FAULT_FLAG		(1 << 1)
-#define USER_MODE_FLAG		(1 << 2)
-#define INVALID_RESERVED	(1 << 3)
-#define INSTRUCTION_FETCH	(1 << 4)
+#define PRESENT_MASK		(1 << 0)
+#define RW_MASK			(1 << 1)
+#define USER_MODE_MASK		(1 << 2)
+#define RSVD3_MASK		(1 << 3)
+#define RSVD4_MASK		(1 << 4)
+#define ACCESSED_MASK		(1 << 5)
+#define DIRTY_BIT_MASK		(1 << 6)
+#define RSVD7_MASK		(1 << 7)
+#define RSVD8_MASK		(1 << 8)
 
 struct page
 {
