@@ -142,11 +142,11 @@ void handle_page_fault(struct registers *regs)
 	int reserved;
 	uint32_t faulting_address;
 	
-	present = !(regs->err_code & PRESENT_FLAG);
-	rw = regs->err_code & RW_FAULT_FLAG;
-	usr = regs->err_code & USER_MODE_FLAG;
-	reserved = regs->err_code & 0x8;
-	id = regs->err_code & 0x10;
+	present = !(regs->err_code & PRESENT_MASK);
+	rw = regs->err_code & RW_MASK;
+	usr = regs->err_code & USER_MODE_MASK;
+	reserved = regs->err_code & RSVD3_MASK;
+	id = regs->err_code & ACCESSED_MASK;
 
 	faulting_address = get_faulting_address();
 
