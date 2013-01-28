@@ -5,7 +5,7 @@
 #include <kernel/isr.h>
 #include <kernel/types.h>
 
-#define PAGE_SIZ 1 << 12
+#define PAGE_SIZ (1 << 12)
 #define PAGING_FLAG 0x80000000
 
 struct page
@@ -33,10 +33,13 @@ struct page_directory
 
 static inline void enable_paging()
 {
+	// uint32_t flag;
+	// flag = 0x80000000;
 	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
-			      "orl %0, %%eax\n\t"
-			      "movl %%eax, %%cr0"
-			      :: "r" (PAGING_FLAG) : "memory");
+			      "orl $0x80000000, %%eax\n\t"
+			      "movl %%eax, %%cr0" : );
+			      // :: "r" (flag) : "memory" );
+			      // :: "r" (PAGING_FLAG) : "memory");
 }
 
 static inline __u32 get_faulting_address()
@@ -66,7 +69,6 @@ static inline void flush_tlb()
 extern struct page_directory *current_directory;
 
 void init_paging();
-void handle_page_fault(struct registers *regs);
 struct page *get_page(uint32_t address, int creat, struct page_directory *dir);
 
 #endif /* _PAGE_H_ */
