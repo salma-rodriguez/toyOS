@@ -142,9 +142,9 @@ void handle_page_fault(struct registers *regs)
 	int reserved;
 	uint32_t faulting_address;
 	
-	present = !(regs->err_code & 0x1);
-	rw = regs->err_code & 0x2;
-	usr = regs->err_code & 0x4;
+	present = !(regs->err_code & PRESENT_FLAG);
+	rw = regs->err_code & RW_FAULT_FLAG;
+	usr = regs->err_code & USER_MODE_FLAG;
 	reserved = regs->err_code & 0x8;
 	id = regs->err_code & 0x10;
 
