@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "multiboot.h"
 #include <asm/page.h>
 #include <asm/common.h>
@@ -31,16 +30,17 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 	init_paging();
 
 	enable_interrupts();
-	
-	// page fault handler not working
-	
-	// uint32_t *ptr = (uint32_t *)0xA0000000;
-	// uint32_t do_page_fault = *ptr;
 
-	// testing devision by zero
+	// testing division by zero
 	
-	int i;
-	i = 500 / 0;
+	// int i;
+	// i = 500 / 0;
+	
+	// testing page fault
+	// raises gpf for some reason...
+	
+	uint32_t *ptr = (uint32_t *)0xA0000000;
+	uint32_t do_page_fault = *ptr;
 
 	while(1);
 
