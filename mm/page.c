@@ -155,6 +155,4 @@ void handle_page_fault(struct registers *regs)
 		present? "present":"", rw? "read-write":"",
 		usr? "user-mode":"", reserved? "reserved":"",
 		faulting_address);
-
-	PANIC("page fault");
 }
