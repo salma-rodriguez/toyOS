@@ -11,8 +11,6 @@ void isr_handler(struct registers regs)
 
 	DPRINTK("recieved interrupt: %d\n", regs.int_no);
 
-	send_eoi_master();
-
 	if (interrupt_handlers[regs.int_no])
 	{
 		handler = interrupt_handlers[regs.int_no];
