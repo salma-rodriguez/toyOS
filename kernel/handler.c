@@ -5,8 +5,6 @@
 #include <kernel/printk.h>
 #include <kernel/panic.h>
 
-// extern isr_t interrupt_handlers[INTS];
-
 /** handlers for common interrupts **/
 
 /* these are scattered in different files
@@ -17,12 +15,12 @@
 
 void handle_divz_fault(struct registers *regs)
 {
-	printk("devision by zero!\n");
+	printk("division by zero!\n");
 }
 
 void handle_debugger(struct registers *regs)
 {
-	printk("debugger\n");
+	printk("debug exception!\n");
 }
 
 void handle_non_maskable(struct registers *regs)
@@ -42,12 +40,12 @@ void handle_overflow(struct registers *regs)
 
 void handle_bounds_err(struct registers *regs)
 {
-	PANIC("A bounds error has occurred!");
+	PANIC("out of bounds exception!");
 }
 
 void handle_inv_opcode(struct registers *regs)
 {
-	printk("invalid opcode!\n");
+	printk("invalid opcode exception!\n");
 }
 
 void handle_co_pnavail(struct registers *regs)
@@ -57,17 +55,19 @@ void handle_co_pnavail(struct registers *regs)
 
 void handle_double_fault(struct registers *regs)
 {
-	PANIC("double fault!");
+	printk("double fault!");
+	PANIC("error code: 0x%lx\n", regs->err_code);
 }
 
 void handle_seg_overrun(struct registers *regs)
 {
-	printk("segment overrun!\n");
+	printk("co-processor segment overrun!\n");
 }
 
 void handle_seg_inv(struct registers *regs)
 {
-	printk("invalid segment!\n");
+	printk("invalid segment (bad TSS)!\n");
+	PANIC("error code: 0x%lx\n", regs->err_code);
 }
 
 void handle_seg_np_fault(struct registers *regs)
@@ -77,24 +77,36 @@ void handle_seg_np_fault(struct registers *regs)
 
 void handle_stack_fault(struct registers *regs)
 {
-	printk("stack fault was triggered\n");
+	printk("a stack fault has occurred!\n");
+	PANIC("error code: 0x%lx\n", regs->err_code);
 }
 
 void handle_gpf(struct registers *regs)
 {
-	PANIC("global protection fault!");
+	printk("general protection fault!\n");
+	PANIC("error code: 0x%lx\n", regs->err_code);
 }
 
 extern void handle_page_fault(struct registers *regs);
 
-void handle_seg_fault(struct registers *regs)
+void handle_unknown(struct registers *regs)
 {
-	printk("segmentation fault!\n");
+	printk("unknown exception\n");
 }
 
 void handle_math_fault(struct registers *regs)
 {
-	printk("math fault!\n");
+	printk("co-processor fault!\n");
+}
+
+void handle_align_check(struct registers *regs)
+{
+	printk("alignment check exception!\n");
+}
+
+void handle_machine_chck(struct registers *regs)
+{
+	printk("machine check exception!\n");
 }
 
 extern void handle_pit_irq(struct registers *regs);
@@ -217,8 +229,10 @@ void init_fault_handlers()
 	register_interrupt_handler(SIG_STACKV, (isr_t)handle_stack_fault);
 	register_interrupt_handler(SIG_GENPFV, (isr_t)handle_gpf);
 	register_interrupt_handler(SIG_PAGEFV, (isr_t)handle_page_fault);
-	register_interrupt_handler(SIG_SEGFLT, (isr_t)handle_seg_fault);
+	register_interrupt_handler(SIG_UNKNWN, (isr_t)handle_unknown);
 	register_interrupt_handler(SIG_MATHFV, (isr_t)handle_math_fault);
+	register_interrupt_handler(SIG_ALGMNT, (isr_t)handle_align_check);
+	register_interrupt_handler(SIG_MACHNE, (isr_t)handle_machine_chck);
 
 	printk("done!\n");
 }
