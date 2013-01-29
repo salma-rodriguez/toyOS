@@ -8,8 +8,7 @@
 #include <kernel/monitor.h>
 #include <kernel/printk.h>
 #include <kernel/handler.h>
-
-extern void init_descriptor_tables();
+#include <kernel/tables.h>
 
 int kmain(multiboot_info_t *mbd, uint32_t magic) {
 
