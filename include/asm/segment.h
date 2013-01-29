@@ -1,7 +1,6 @@
 #ifndef _SEGMENT_H_
 #define _SEGMENT_H_
 
-
 #define SEG_SAVL(X)      ((X) << 0x04) 
 #define SEG_LONG(X)      ((X) << 0x05) 
 #define SEG_SIZE(X)      ((X) << 0x06) 
@@ -27,13 +26,13 @@
 #define SEG_CODE_EXRDC     0x0E 
 #define SEG_CODE_EXRDCA    0x0F 
  
-#define GDT_CODE_PL(X) SEG_PRES(1) 	| SEG_PRIV(X) | \
-		   	SEG_DESCTYPE(1) | SEG_CODE_EXRD
+#define GDT_CODE_PL(X)	SEG_PRES(1)	| SEG_PRIV(X) | \
+			SEG_DESCTYPE(1) | SEG_CODE_EXRD
 		       
-#define GDT_DATA_PL(X) SEG_PRES(1) 	| SEG_PRIV(X) | \
-		   	SEG_DESCTYPE(1) | SEG_DATA_RDWR
+#define GDT_DATA_PL(X)	SEG_PRES(1)	| SEG_PRIV(X) | \
+			SEG_DESCTYPE(1) | SEG_DATA_RDWR
 
-#define GRANULARITY(L) SEG_GRAN(1) 	| SEG_SIZE(1) | \
-			SEG_LONG(0)	| SEG_SAVL(0) | L
+#define GRANULARITY(L)	SEG_GRAN(1)	| SEG_SIZE(1) | \
+		       	SEG_LONG(0)	| SEG_SAVL(0) | L
 
 #endif /* _SEGMENT_H_ */

@@ -21,7 +21,7 @@ struct gdt_entry_struct
 	__u16	 lim_lo;	// lower 16 bits of limit
 	__u16	 base_l;	// lower 16 bits of the base
 	__u8	 base_m;	// middle eight bits of the base
-	__u8	 privge;	// access flags, determines ring
+	__u8	 access;	// access flags, determines ring
 	__u8	 granty;
 	__u8	 base_h;	// last 8 bits of the base
 } __attribute__ ((packed));
