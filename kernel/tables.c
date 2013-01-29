@@ -6,11 +6,13 @@
 #include <kernel/isr.h>
 #include <kernel/printk.h>
 
-#define CODE	0
-#define DATA	1
+#define PL0		0
+#define PL3		3
 
-#define NOINTS	256
-#define MAXADDR 0xFFFFFFFF
+#define CODE		0
+#define DATA		1
+
+#define MAXADDR 	0xFFFFFFFF
 
 #define ISR(isrnum) idt_set_gate(isrnum, (uint32_t)isr##isrnum)
 #define IRQ(num, irqnum) idt_set_gate(num, (uint32_t)irq##irqnum)
@@ -45,10 +47,10 @@ void init_descriptor_tables()
 static void gdt_init()
 {
 	gdt_set_gate(0, 0, 0, 0, 0);
-	gdt_set_gate(1, 0, CODE, 0, MAXADDR);
-	gdt_set_gate(2, 0, DATA, 0, MAXADDR);
-	gdt_set_gate(3, 3, CODE, 0, MAXADDR);
-	gdt_set_gate(4, 3, DATA, 0, MAXADDR);
+	gdt_set_gate(1, PL0, CODE, 0, MAXADDR);
+	gdt_set_gate(2, PL0, DATA, 0, MAXADDR);
+	gdt_set_gate(3, PL3, CODE, 0, MAXADDR);
+	gdt_set_gate(4, PL3, DATA, 0, MAXADDR);
 
 	gdt_page.gdt_ptr.base = (uint32_t)&gdt_page.gdt;
 	gdt_page.gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
@@ -74,7 +76,6 @@ static void idt_init()
 {
 	idt_page.idt_ptr.base  = (uint32_t)&idt_page.idt;
 	idt_page.idt_ptr.limit = sizeof(idt_entry_t) * IDT_ENTRIES - 1;
-
 	memset(&idt_page.idt, 0, sizeof(idt_entry_t) * IDT_ENTRIES);
 
 	remap_irq_table();
@@ -131,10 +132,10 @@ static void idt_init()
 	idt_flush((uint32_t)&idt_page.idt_ptr);
 }
 
-static inline void gdt_set_gate(uint8_t num, uint8_t privilege, 
+static inline void gdt_set_gate(uint8_t num, uint8_t dpl, 
 		uint8_t type, uint32_t base, uint32_t limit)
 {
-	gdt_page.gdt[num] = GDT_SET_GATE(privilege, type, base, limit);
+	gdt_page.gdt[num] = GDT_SET_GATE(dpl, type, base, limit);
 }
 
 static inline void idt_set_gate(uint8_t num, uint32_t base)
