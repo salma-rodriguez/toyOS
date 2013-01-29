@@ -18,6 +18,8 @@
 #define INT14		0x0E
 #define INT15		0x0F
 #define INT16		0X10
+#define INT17		0x11
+#define INT18		0x12
 
 #define IRQ0		0x20
 #define IRQ1		0x21
