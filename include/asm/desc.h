@@ -20,7 +20,7 @@
 	.access = seg? GDT_DATA_PL(dpl): GDT_CODE_PL(dpl)
 
 #define SET_GDT_GRANULARITY(lim, len) \
-	.granty = (((lim >> 0x10) & 0x0F) | (GRANULARITY(len)) & 0xF0)
+	.granty = (((lim >> 0x10) & 0x0F) | ((GRANULARITY(len)) & 0xF0))
 
 #define SET_IDT_BASE(base)					\
 	.base_l = base & 0xFFFF,				\
