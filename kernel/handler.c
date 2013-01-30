@@ -73,6 +73,7 @@ void handle_seg_inv(struct registers *regs)
 void handle_seg_np_fault(struct registers *regs)
 {
 	printk("segment not present!\n");
+	PANIC("error code: 0x%lx\n", regs->err_code);
 }
 
 void handle_stack_fault(struct registers *regs)
