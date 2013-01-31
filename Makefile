@@ -5,7 +5,7 @@ BUILD	= kernel.bin
 CFLAGS	= -Wall -m32 -c -I./include -nostdlib -mno-sse \
 	  -nostartfiles -nodefaultlibs -nostdinc -fno-builtin \
 	  -fno-stack-protector
-LDFLAGS	= -Tlink.ld -melf_i386
+LDFLAGS	= -Tlink.ld -zmax-page-size=0x1000 -melf_i386
 ASFLAGS	= -felf 
 
 BIN	= bin
