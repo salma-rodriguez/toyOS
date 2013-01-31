@@ -40,10 +40,31 @@ struct page_directory
 	uint32_t physical_addr;
 };
 
+static inline void enable_pse()
+{
+	__asm__ __volatile__ ("movl %%cr4, %%eax\n\t"
+			      "orl $0x00000010, %%eax\n\t"
+			      "movl %%eax, %%cr4" : );
+}
+
 static inline void enable_paging()
 {
 	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
 			      "orl $0x80000000, %%eax\n\t"
+			      "movl %%eax, %%cr0" : );
+}
+
+static inline void switch_to_protected_mode()
+{
+	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
+			      "orl $0x00000001, %%eax\n\t"
+			      "movl %%eax, %%cr0" : );
+}
+
+static inline void enable_protected_paging()
+{
+	__asm__ __volatile__ ("movl %%cr0, %%eax\n\t"
+			      "orl $0x80000001, %%eax\n\t"
 			      "movl %%eax, %%cr0" : );
 }
 
