@@ -28,7 +28,7 @@ SECTIONS {
 	.bss :
 	{
 		sbss = .;
-		*(.COMMON)
+		*(COMMON)
 		*(.bss)
 		ebss = .;
 	}
