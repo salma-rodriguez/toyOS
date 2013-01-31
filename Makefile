@@ -17,7 +17,7 @@ MKDIR	= $(CURDIR)/$(BIN)
 # under boot
 ASSRCS	+= boot.s
 # under kernel
-ASSRCS  += interrupt.s
+ASSRCS  += interrupt.s flush.s
 # under lib
 SOURCES += string.c ctype.c printf.c
 # under init
