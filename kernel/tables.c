@@ -53,7 +53,7 @@ static void gdt_init()
 	gdt_set_gate(4, PL3, DATA, 0, MAXADDR);
 
 	gdt_page.gdt_ptr.base = (uint32_t)&gdt_page.gdt;
-	gdt_page.gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
+	gdt_page.gdt_ptr.lim  = (sizeof(gdt_entry_t) * 5) - 1;
 	
 	gdt_flush((uint32_t)&gdt_page.gdt_ptr);
 }
@@ -74,8 +74,9 @@ static void remap_irq_table()
 
 static void idt_init()
 {
-	idt_page.idt_ptr.base  = (uint32_t)&idt_page.idt;
-	idt_page.idt_ptr.limit = sizeof(idt_entry_t) * IDT_ENTRIES - 1;
+	idt_page.idt_ptr.base = (uint32_t)&idt_page.idt;
+	idt_page.idt_ptr.lim  = sizeof(idt_entry_t) * IDT_ENTRIES - 1;
+	
 	memset(&idt_page.idt, 0, sizeof(idt_entry_t) * IDT_ENTRIES);
 
 	remap_irq_table();

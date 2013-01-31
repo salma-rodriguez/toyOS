@@ -5,9 +5,8 @@
 #include <asm/desc_defs.h>
 
 // This structure contains the value of one GDT entry.
-// We use the attribute 'pacdked' to tell GCC not to change
-// any of the aligment in the structure
-
+// We use the attribute 'packed' to tell GCC not to change
+// any of the alignment in the structure
 
 #define SET_GDT_BASE(base) 					\
 	.base_l = (base & 0xFFFF), 				\
@@ -26,9 +25,9 @@
 	.base_l = base & 0xFFFF,				\
 	.base_h = (base >> 16) & 0xFFFF
 
-#define SET_IDT_ZERO() .zero = 0x00
-#define SET_IDT_SELECTOR(sl) .sel = sl
-#define SET_IDT_FLAGS(flag) .flags = flag
+#define SET_IDT_ZERO() .alzero = 0x00
+#define SET_IDT_SELECTOR(sel) .select = sel
+#define SET_IDT_FLAGS(flags) .eflags = flags
 
 // static inline void set_desc_base(__u64 base);
 

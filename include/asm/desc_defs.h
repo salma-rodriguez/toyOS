@@ -3,32 +3,32 @@
 
 struct idt_entry_struct
 {
-	__u16 	base_l;		// low 16 bits of jump address
-	__u16	sel;
-	__u8	zero;
-	__u8	flags;		// more flags
-	__u16	base_h;		// upper 16 bits of jump address
+	__u64	base_l : 0x10;
+	__u64	select : 0x10;
+	__u64	alzero : 0x08;
+	__u64	eflags : 0x08;
+	__u64	base_h : 0x10;
 } __attribute__ ((packed));
 
 struct idt_ptr_struct
 {
-	__u16	limit;
+	__u16	lim;
 	__u32	base;		// address of first element
 } __attribute__ ((packed));
 
 struct gdt_entry_struct
 {
-	__u16	 lim_lo;	// lower 16 bits of limit
-	__u16	 base_l;	// lower 16 bits of the base
-	__u8	 base_m;	// middle eight bits of the base
-	__u8	 access;	// access flags, determines ring
-	__u8	 granty;
-	__u8	 base_h;	// last 8 bits of the base
+	__u64	lim_lo : 0x10;
+	__u64	base_l : 0x10;
+	__u64	base_m : 0x08;
+	__u64	access : 0x08;
+	__u64	granty : 0x08;
+	__u64	base_h : 0x08;
 } __attribute__ ((packed));
 
 struct gdt_ptr_struct
 {
-	__u16 	limit;		// upper 16 bits of selector limits
+	__u16 	lim;		// upper 16 bits of selector limits
 	__u32	base;		// address of the first gdt_entry_t
 } __attribute__ ((packed));
 
