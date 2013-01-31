@@ -9,7 +9,7 @@ uint32_t placement_addr = (uint32_t)&end;
 static uint32_t kmalloc_int(size_t, int, uint32_t *);
 
 #define ALIGN() \
-	if (placement_addr & 0xFFFFF000) { \
+	if (placement_addr & 0x00000FFF) { \
 		placement_addr &= 0xFFFFF000; \
 		placement_addr += 0x1000; \
 	}
