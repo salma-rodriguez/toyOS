@@ -19,13 +19,13 @@ ASSRCS	+= boot.s
 # under kernel
 ASSRCS  += interrupt.s flush.s
 # under lib
-SOURCES += string.c ctype.c printf.c
+SOURCES += string.c ctype.c printf.c array.c
 # under init
 SOURCES += monitor.c kernel.c
 # under kernel
 SOURCES += isr.c tables.c timer.c common.c panic.c bug.c handler.c
 # under mm
-SOURCES += page.c slab.c
+SOURCES += page.c heap.c
 
 OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
