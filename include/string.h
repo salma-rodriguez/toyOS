@@ -5,10 +5,7 @@
 #define NULL ((void *) 0)
 #endif
 
-#ifndef _SIZE_T
-#define _SIZE_T
-typedef unsigned int size_t;
-#endif
+#include <kernel/types.h>
 
 #ifndef __always_inline
 #define __always_inline inline
