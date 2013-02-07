@@ -2,7 +2,7 @@
 #include <asm/page.h>
 #include <kernel/isr.h>
 #include <kernel/types.h>
-#include <kernel/kheap.h>
+#include <kernel/heap.h>
 #include <kernel/panic.h>
 #include <kernel/printk.h>
 
