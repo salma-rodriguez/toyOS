@@ -1,4 +1,7 @@
+#include <kernel/heap.h>
 #include <kernel/types.h>
+
+#define PAGE_SIZE (1 << 12)
 
 extern uint32_t end;
 uint32_t placement_addr = (uint32_t)&end;
@@ -53,11 +56,11 @@ static int32_t find_smallest_hole(size_t size, uint8_t page_align, struct heap *
 	off_t offset;
 	ssize_t hole_size;
 	uint32_t location;
-	struct header *header
+	struct header *header;
 
 	i=0;
-	while (i < heap->index->size) {
-		header = (struct header *)lookup_ordered_array(i, heap->index);
+	while (i < heap->index->count) {
+		header = (struct header *)heap->index->lookup(i, heap->index);
 		if (page_align > 0) {
 			location = (uint32_t)header;
 			offset = 0;
@@ -71,7 +74,7 @@ static int32_t find_smallest_hole(size_t size, uint8_t page_align, struct heap *
 		i++;
 	}
 
-	if (i == heap->index->size)
+	if (i == heap->index->count)
 		return -1;
 
 	return i;
