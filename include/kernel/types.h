@@ -26,8 +26,8 @@ typedef 	__u16 	uint16_t;
 typedef 	__u32 	uint32_t;
 typedef		__u64	uint64_t;
 
+typedef int off_t;
 typedef int ssize_t;
 typedef unsigned int size_t;
-typedef unsigned int off_t;
 
-#endif
+#endif /* _TYPES_H_ */
