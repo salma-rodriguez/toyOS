@@ -7,18 +7,21 @@
 #define HEAP_MAGIC		0x123890AB
 #define HEAP_MIN_SIZE		0x70000
 
+#include <array.h>
+#include <kernel/types.h>
+
 struct header
 {
 	uint32_t magic;
 	uint8_t is_hole;
 	uint32_t size;
-}
+};
 
 struct footer
 {
 	uint32_t magic;
 	struct header *header;
-}
+};
 
 struct heap
 {
@@ -28,7 +31,7 @@ struct heap
 	uint32_t max_address;
 	uint8_t supervisor;
 	uint8_t readonly;
-}
+};
 
 uint32_t kmalloc(size_t siz);
 uint32_t kmalloc_a(size_t siz);
