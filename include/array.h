@@ -13,11 +13,11 @@ typedef void *(*gendel_t)(int, struct array_list *);
 typedef void (*add_t)(void *, struct array_list *);
 typedef void (*genadd_t)(int, void *, struct array_list *);
 typedef int (*getidx_t)(void *, struct array_list *);
-typedef any_t (*lookup_t)(int idx, struct array_list *);
+typedef any_t (*lookup_t)(int, struct array_list *);
 typedef void (*copy_t)(struct array_list *, struct array_list *);
 typedef struct ordered_array *(*place_t)(void *, size_t, compare_t);
 typedef void (*insert_t)(any_t, struct ordered_array *);
-typedef void (*remove_t)(uint32_t i, struct ordered_array *)
+typedef void (*remove_t)(uint32_t, struct ordered_array *);
 typedef any_t (*getitm_t)(uint32_t, struct ordered_array *);
 
 struct array_list {
