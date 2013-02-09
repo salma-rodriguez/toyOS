@@ -41,14 +41,15 @@ struct ordered_array {
 	any_t *array;
 	insert_t insert;
 	getitm_t lookup;
+	remove_t remove;
 	compare_t compare;
 };
 
 struct array_list *create(struct array_list *, compare_t);
 struct array_list *destroy(struct array_list *);
 
-struct ordered_array *create_ordered_array(size_t size, compare_t fun);
-struct ordered_array *place_ordered_array(void *addr, size_t size, compare_t fun);
-struct ordered_array *destroy_ordered_array(struct ordered_array *array);
+struct ordered_array create_ordered_array(size_t, compare_t);
+struct ordered_array place_ordered_array(void *, size_t, compare_t);
+void destroy_ordered_array(struct ordered_array *);
 
 #endif /* __ARRAY_H */
