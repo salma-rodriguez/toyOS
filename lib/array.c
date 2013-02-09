@@ -16,14 +16,13 @@ static void copy(struct array_list *, struct array_list *);
 static any_t *__set(int size)
 {
 	any_t *arr;
-	arr = kmalloc(size * sizeof(any_t));
+	arr = (any_t *)kmalloc(size * sizeof(any_t));
 	return memset(arr, 0, size * sizeof(any_t));
 }
 
 static void __alloc(struct array_list **list)
 {
-	*list = kmalloc(sizeof(struct array_list));
-}
+	*list = (struct array_list *)kmalloc(sizeof(struct array_list)); }
 
 static struct array_list *__init(struct array_list *list, compare_t fun)
 {
