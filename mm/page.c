@@ -27,13 +27,13 @@ static void set_frame(uint32_t frame_addr)
 	frames[idx] |= (0x1 << off);
 }
 
-/* static void clear_frame(uint32_t frame_addr)
+static void clear_frame(uint32_t frame_addr)
 {
 	uint32_t frame = frame_addr/PAGE_SIZ;
 	uint32_t idx = INDEX_FROM_BIT(frame);
 	uint32_t off = OFFSET_FROM_BIT(frame);
 	frames[idx] &= ~(0x1 << off);
-} */
+}
 
 /* static uint32_t test_frame(uint32_t frame_addr)
 {
@@ -73,7 +73,7 @@ void alloc_frame(struct page *page, int kernel, int writable)
 	}
 }
 
-/* void free_frame(struct page *page)
+void free_frame(struct page *page)
 {
 	uint32_t frame;
 	if (!(frame = page->frame))
@@ -82,7 +82,7 @@ void alloc_frame(struct page *page, int kernel, int writable)
 		clear_frame(frame);
 		page->frame = 0x00000;
 	}
-} */
+}
 
 void init_paging()
 {
