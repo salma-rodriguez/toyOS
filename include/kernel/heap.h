@@ -25,7 +25,7 @@ struct footer
 
 struct heap
 {
-	struct ordered_array *index;
+	struct ordered_array index;
 	uint32_t start_address;
 	uint32_t end_address;
 	uint32_t max_address;
