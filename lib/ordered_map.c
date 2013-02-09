@@ -1,41 +1,47 @@
 #include <array.h>
+#include <string.h>
+#include <kernel/heap.h>
 
-static void insert(any_t item, struct ordered_array *array);
+static void insert(any_t, struct ordered_array *);
+static void remove(uint32_t, struct ordered_array *);
+static any_t lookup(uint32_t, struct ordered_array *);
 
-struct ordered_array *create_ordered_array(size_t size, compare_t fun)
+struct ordered_array create_ordered_array(size_t size, compare_t fun)
 {
 	struct ordered_array to_ret;
-	to_ret.array = (void *)kmalloc(size*sizeof*(any_t));
-	memset(to_ret.array, 0, size*sizeof(any_t));
+	to_ret.array = (void *)kmalloc(size * sizeof(any_t));
+	memset(to_ret.array, 0, size * sizeof(any_t));
 	to_ret.count = 0;
 	to_ret.size = size;
 	to_ret.compare = fun;
 	to_ret.insert = insert;
-	return &to_ret;
+	to_ret.remove = remove;
+	to_ret.lookup = lookup;
+	return to_ret;
 }
 
-struct ordered_array *place_ordered_array(void *addr, size_t size, compare_t fun)
+struct ordered_array place_ordered_array(void *addr, size_t size, compare_t fun)
 {
 	struct ordered_array to_ret;
-	to_ret.array = (type_t *)addr;
-	memset(to_ret.array, 0, max_size*sizeof(any_t));
+	to_ret.array = (any_t *)addr;
+	memset(to_ret.array, 0, size * sizeof(any_t));
 	to_ret.count = 0;
 	to_ret.size = size;
 	to_ret.compare = fun;
+	return to_ret;
 }
 
-struct ordered_array *destroy_ordered(ordered_array_t *arr)
+void destroy_ordered_array(struct ordered_array *arr)
 {
-	kfree(arr->array);
-	return NULL;
+	// kfree(arr->array);
 }
 
-static void insert_ordered_array(any_t item, ordered_array *arr)
+static void insert(any_t item, struct ordered_array *arr)
 {
 	// ASSERT(array->compare);
 	any_t t1, t2;
 	uint32_t i = 0;
-	while(i < arr->count && array->compare(arr->array[i], item) < 0)
+	while(i < arr->count && arr->compare(arr->array[i], item))
 		i++;
 	if (i == arr->count)
 		arr->array[arr->count++] = item;
@@ -59,7 +65,7 @@ static any_t lookup(uint32_t i, struct ordered_array *arr)
 	return arr->array[i];
 }
 
-void remove_ordered_array(uint32_t i, struct ordered_array *arr)
+static void remove(uint32_t i, struct ordered_array *arr)
 {
 	while (i < arr->count)
 	{
