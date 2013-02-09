@@ -19,7 +19,7 @@ ASSRCS	+= boot.s
 # under kernel
 ASSRCS  += interrupt.s flush.s
 # under lib
-SOURCES += string.c ctype.c printf.c array.c
+SOURCES += string.c ctype.c printf.c array.c ordered_map.c
 # under init
 SOURCES += monitor.c kernel.c
 # under kernel
