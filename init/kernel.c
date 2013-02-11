@@ -9,8 +9,13 @@
 #include <kernel/printk.h>
 #include <kernel/handler.h>
 #include <kernel/tables.h>
+#include <kernel/heap.h>
+
+extern struct heap *kheap;
 
 int kmain(multiboot_info_t *mbd, uint32_t magic) {
+
+	uint32_t a, b, c, d;
 
 	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
 		PANIC("boot pagic is incorrect\n");
@@ -18,17 +23,32 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 
 	monitor_clear();
 
-	disable_interrupts();
-
 	printk("initializing...\n");
+
+	disable_interrupts();
 
 	init_descriptor_tables();
 	init_irq_handlers();
 	init_fault_handlers();
 	init_timer(PIT_FREQUENCY);
+
+	a = kmalloc(8);
+
 	init_paging();
 
 	enable_interrupts();
+
+	b = kmalloc(8);
+	c = kmalloc(8);
+
+	printk("a: %lx, b: %lx\nc: %lx", a, b, c);
+
+	kfree((void *)c);
+	kfree((void *)b);
+
+	d = kmalloc(12);
+
+	printk(", d: %lx\n", d);
 
 	// testing division by zero
 	
@@ -36,10 +56,9 @@ int kmain(multiboot_info_t *mbd, uint32_t magic) {
 	// i = 500 / 0;
 	
 	// testing page fault
-	// raises gpf for some reason...
 	
-	uint32_t *ptr = (uint32_t *)0xA0000000;
-	uint32_t do_page_fault = *ptr;
+	/* uint32_t *ptr = (uint32_t *)0xA0000000;
+	uint32_t do_page_fault = *ptr; */
 
 	while(1);
 
