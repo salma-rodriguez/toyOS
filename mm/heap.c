@@ -4,6 +4,7 @@
 
 #define PAGE_SIZE (1 << 12)
 
+struct heap *kheap;
 extern uint32_t end;
 uint32_t placement_addr = (uint32_t)&end;
 extern struct page_directory *kernel_directory;
@@ -25,8 +26,14 @@ static uint32_t kmalloc_int(size_t, int, uint32_t *);
 	tmp; \
 })
 
+void kfree(void *p)
+{
+	if (kheap) free(p, kheap);
+}
+
 uint32_t kmalloc(size_t siz)
 {
+	if (kheap) return (uint32_t)alloc(siz, 1, kheap);
 	return kmalloc_int(siz, 0, NULL);
 }
 
@@ -63,15 +70,15 @@ struct heap *create_heap(uint32_t start, uint32_t end_addr, uint32_t max, uint8_
 {
 	struct heap *heap;
 	struct header *hole;
-	
-	heap = (struct heap *)kmalloc(sizeof(struct heap));
+
+	heap = (struct heap *)kmalloc_int(sizeof(struct heap), 0, NULL);
 
 	// ASSERT(start%PAGE_SIZE == 0);
 	// ASSERT(end_addr%PAGE_SIZE == 0);
 	
 	heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, compare);
 
-	start += HEAP_INDEX_SIZE*sizeof(any_t);
+	start += HEAP_INDEX_SIZE * sizeof(any_t);
 
 	if ((start & 0xFFFFF000) != 0) {
 		start &= 0xFFFFF000;
@@ -152,7 +159,7 @@ static int32_t find_smallest_hole(size_t size, uint8_t page_align, struct heap *
 	i=0;
 	while (i < heap->index.count) {
 		header = (struct header *)heap->index.lookup(i, &heap->index);
-		if (page_align > 0) {
+		if (page_align) {
 			location = (uint32_t)header;
 			offset = 0;
 			if (((location + sizeof(struct header)) & 0xFFFFF000) != 0)
@@ -202,7 +209,7 @@ void *alloc(size_t size, uint8_t page_align, struct heap *heap)
 		iterator = 0;
 
 		idx = -1; value = 0x0;
-		while (iterator < heap->index.size)
+		while (iterator < heap->index.count)
 		{
 			tmp = (uint32_t)heap->index.lookup(iterator, &heap->index);
 			if (tmp > value) {
@@ -241,7 +248,7 @@ void *alloc(size_t size, uint8_t page_align, struct heap *heap)
 		new_size = orig_hole_size;
 	}
 	
-	if (page_align && orig_hole_pos&0xFFFFF000) {
+	if (page_align && orig_hole_pos & 0xFFFFF000) {
 		new_location = orig_hole_pos + PAGE_SIZE - (orig_hole_pos & 0xFFF) - sizeof(struct header);
 		hole_header = (struct header *)orig_hole_pos;
 		hole_header->size = PAGE_SIZE - (orig_hole_pos & 0xFFF) - sizeof(struct header);
@@ -275,4 +282,75 @@ void *alloc(size_t size, uint8_t page_align, struct heap *heap)
 		heap->index.insert((void *)hole_header, &heap->index);
 		return (void *)((uint32_t)block_header + sizeof(struct header));
 	} return NULL;
+}
+
+void free(void *p, struct heap *heap)
+{
+	char do_add;
+	uint32_t iterator;
+	uint32_t cache_size;
+	uint32_t old_length;
+	uint32_t new_length;
+	struct header *header;
+	struct footer *footer;
+	struct header *test_header;
+	struct footer *test_footer;
+
+	if (!p) return;
+
+	header = (struct header *)((uint32_t)p - sizeof(struct header));
+	footer = (struct footer *)((uint32_t)header + header->size - sizeof(struct footer));
+
+	// ASSERT(header->magic == HEAP_MAGIC);
+	// ASSERT(footer->magic == HEAP_MAGIC);
+	
+	header->is_hole = 1;
+	do_add = 1;
+
+	test_footer = (struct footer *)((uint32_t)header - sizeof(struct footer));
+	if (test_footer->magic == HEAP_MAGIC &&
+		test_footer->header->is_hole)
+	{
+		cache_size = header->size;
+		header = test_footer->header;
+		footer->header = header;
+		header->size += cache_size;
+		do_add = 0;
+	}
+
+	test_header = (struct header *)((uint32_t)footer + sizeof(struct footer));
+	if (test_header->magic == HEAP_MAGIC && test_header->is_hole)
+	{
+		header->size += test_header->size;
+		test_footer = (struct footer *)((uint32_t)test_header + test_header->size - sizeof(struct footer));
+		footer = test_footer;
+		iterator = 0;
+		while ((iterator < heap->index.count) &&
+			(heap->index.lookup(iterator, &heap->index) != (void *)test_header))
+			iterator++;
+		// ASSERT(iterator < heap->index.count);
+		heap->index.remove(iterator, &heap->index);
+	}
+
+	if ((uint32_t)footer + sizeof(struct footer) == heap->end_address)
+	{
+		old_length = heap->end_address - heap->start_address;
+		new_length = contract((uint32_t)header - heap->start_address, heap);
+
+		if (header->size - (old_length - new_length) > 0) {
+			header->size -= old_length - new_length;
+			footer = (struct footer *)((uint32_t)header + header->size - sizeof(struct footer));
+			footer->magic = HEAP_MAGIC;
+			footer->header = header;
+		} else {
+			iterator = 0;
+			while ((iterator < heap->index.size) &&
+				(heap->index.lookup(iterator, &heap->index) != (void *)test_header))
+				iterator++;
+			if (iterator < heap->index.size)
+				heap->index.remove(iterator, &heap->index);
+		}
+		if (do_add == 1)
+			heap->index.insert((void *)header, &heap->index);
+	}
 }

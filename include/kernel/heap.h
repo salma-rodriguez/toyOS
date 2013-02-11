@@ -33,6 +33,7 @@ struct heap
 	uint8_t readonly;
 };
 
+void kfree(void *p);
 uint32_t kmalloc(size_t siz);
 uint32_t kmalloc_a(size_t siz);
 uint32_t kmalloc_p(size_t siz, uint32_t *phys);
