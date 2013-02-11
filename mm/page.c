@@ -1,5 +1,6 @@
 #include <string.h>
 #include <asm/page.h>
+#include <asm/common.h>
 #include <kernel/isr.h>
 #include <kernel/types.h>
 #include <kernel/heap.h>
@@ -9,6 +10,7 @@
 uint32_t *frames;
 uint32_t nframes;
 
+extern struct heap *kheap;
 extern uint32_t placement_addr;
 
 #define INDEX_FROM_BIT(a) (a/(8*4))
@@ -104,14 +106,24 @@ void init_paging()
 	memset(kernel_directory, 0, sizeof(struct page_directory));
 	current_directory = kernel_directory;
 
+	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += PAGE_SIZ)
+		get_page(i, 1, kernel_directory);
+
 	i = 0;
-	while (i < placement_addr) {
+	while (i < placement_addr + PAGE_SIZ) {
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
 		i += PAGE_SIZ;
 	}
 
+	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += PAGE_SIZ)
+		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
+
+	// register_interrupt_handler(14, page_fault);
+
 	switch_page_directory(kernel_directory);
 	enable_paging();
+
+	kheap = create_heap(KHEAP_START, KHEAP_START + KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 
 	printk("done!\n");
 }
