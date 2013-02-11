@@ -28,6 +28,9 @@ struct ordered_array place_ordered_array(void *addr, size_t size, compare_t fun)
 	to_ret.count = 0;
 	to_ret.size = size;
 	to_ret.compare = fun;
+	to_ret.remove = remove;
+	to_ret.lookup = lookup;
+	to_ret.insert = insert;
 	return to_ret;
 }
 
