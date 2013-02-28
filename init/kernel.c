@@ -13,11 +13,13 @@
 
 extern struct heap *kheap;
 
-int kmain(multiboot_info_t *mbd, uint32_t magic) {
+int kmain(multiboot_info_t *mbd, uint32_t magic)
+{
 
 	uint32_t a, b, c, d;
 
-	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) 
+	{
 		PANIC("boot pagic is incorrect\n");
 	}
 
