@@ -1,3 +1,4 @@
+#include <types.h>
 #include <kernel/s.h>
 
 #define FS_FILE		0x01
@@ -8,7 +9,18 @@
 #define FS_SYMLINK	0x06
 #define FS_MOUNTPOINT	0x08
 
-typedef struct fs_node
+struct inode;
+
+extern inode *fs_root;
+
+uint32_t read_fs(struct inode *, off_t, size_t, uint8_t);
+uint32_t write_fs(struct inode *, off_t, size_t, uint8_t);
+void open_fs(struct inode*, uint8_t read, uint8_t write);
+void close_fs(struct inode *);
+struct dirent *readdir_fs(fs_node_t, uint32_t);
+inode *finddir_fs(inode *node, char *name);
+
+struct inode
 {
 	char name[128];
 	uint32_t mask;
@@ -19,30 +31,30 @@ typedef struct fs_node
 	uint32_t length;
 	uint32_t impl;
 
-	read_type_t read;
-	write_type_t write;
-	open_type_t open;
-	close_type_t close;
-	readdir_type_t readdir;
-	finddir_type_t finddir;_
-	struct fs_node *ptr;
-} fs_node_t;
+	read_t read;
+	write_t write;
+	open_t open;
+	close_t close;
+	readdir_t readdir;
+	finddir_t finddir;
+	struct inode *ptr;
+};
 
-typedef uint32_t (*read_type_t)
-(struct fs_node *, uint32_t, uint32_t, uint8_t *);
+typedef uint32_t (*read_t)
+(struct inode *, uint32_t, uint32_t, uint8_t *);
 
-typedef uint32_t (*write_type_t)
-(struct fs_node *, uint32_t, uint32_t, uint8_t *);
+typedef uint32_t (*write_t)
+(struct inode *, uint32_t, uint32_t, uint8_t *);
 
-typedef void (*open_type_t)(struct fs_node *);
+typedef void (*open_t)(struct inode *);
 
-typedef void (*close_type_t)(struct fs_node *);
+typedef void (*close_t)(struct inode *);
 
-typedef struct dirent * (*readdir_type_t);
-(struct fs_node *, uint32_t);
+typedef struct dirent * (*readdir_t);
+(struct inode *, uint32_t);
 
-typedef struct fs_node * (*finddir_type_t)
-(struct fs_node *, char *name);
+typedef struct inode * (*finddir_t)
+(struct inode *, char *name);
 
 struct dirent
 {
