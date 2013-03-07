@@ -10,15 +10,30 @@
 #define FS_MOUNTPOINT	0x08
 
 struct inode;
-
 extern inode *fs_root;
 
-uint32_t read_fs(struct inode *, off_t, size_t, uint8_t);
-uint32_t write_fs(struct inode *, off_t, size_t, uint8_t);
-void open_fs(struct inode*, uint8_t read, uint8_t write);
+typedef uint32_t (*read_t)
+(struct inode *, uint32_t, uint32_t, uint8_t *);
+
+typedef uint32_t (*write_t)
+(struct inode *, uint32_t, uint32_t, uint8_t *);
+
+typedef void (*open_t)(struct inode *);
+
+typedef void (*close_t)(struct inode *);
+
+typedef struct dirent * (*readdir_t);
+(struct inode *, uint32_t);
+
+typedef struct inode * (*finddir_t)
+(struct inode *, char *name); 
+
+uint32_t read_fs(struct inode *, unsigned off_t, size_t, uint8_t);
+uint32_t write_fs(struct inode *, unsigned off_t, size_t, uint8_t);
+void open_fs(struct inode *, uint8_t read, uint8_t write);
 void close_fs(struct inode *);
-struct dirent *readdir_fs(fs_node_t, uint32_t);
-inode *finddir_fs(inode *node, char *name);
+struct dirent *readdir_fs(struct inode *, uint32_t);
+struct inode *finddir_fs(struct inode *, char *name);
 
 struct inode
 {
@@ -40,21 +55,7 @@ struct inode
 	struct inode *ptr;
 };
 
-typedef uint32_t (*read_t)
-(struct inode *, uint32_t, uint32_t, uint8_t *);
 
-typedef uint32_t (*write_t)
-(struct inode *, uint32_t, uint32_t, uint8_t *);
-
-typedef void (*open_t)(struct inode *);
-
-typedef void (*close_t)(struct inode *);
-
-typedef struct dirent * (*readdir_t);
-(struct inode *, uint32_t);
-
-typedef struct inode * (*finddir_t)
-(struct inode *, char *name);
 
 struct dirent
 {
