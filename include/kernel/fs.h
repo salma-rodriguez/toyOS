@@ -1,5 +1,5 @@
 #include <types.h>
-#include <kernel/s.h>
+#include <kernel/fs.h>
 
 #define FS_FILE		0x01
 #define FS_DIRECTORY	0x02
