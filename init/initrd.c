@@ -53,6 +53,8 @@ static struct inode *initrd_finddir(struct inode *inode, char *name)
 
 struct inode *initialize_initrd(uint32_t location)
 {
+        int i;
+        // root directory
         initrd_header = (struct initrd_header *)locatioln;
         file_headers = (initrd_file_header *)(location+sizeof(struct initrd_header));
         initrd_root = (struct inode *)kmalloc(sizeof(struct inode));
@@ -69,4 +71,44 @@ struct inode *initialize_initrd(uint32_t location)
         initrd_root->finddir = &initrd_finddir;
         initrd_root->ptr = NULL;
         initrd_root->impl = NULL;
+        // /dev directory
+        initrd_dev = (struct inode *)kmalloc(sizeof(struct inode));
+        strcpy(initrd_dev->name, "dev");
+        initrd_dev->mask = NULL;
+        initrd_dev->uid = NULL;
+        initrd_dev->gid = NULL;
+        initrd_dev->inode = NULL;
+        initrd_dev->length = NULL;
+        initrd_dev->flags = FS_DIRECTORY;
+        initrd_dev->read = NULL;
+        initrd_dev->write = NULL;
+        initrd_dev->open = NULL;
+        initrd_dev->close = NULL;
+        initrd_dev->readdir = &initrd_readdir;
+        initrd_dev->finddir = &initrd_finddir;
+        initrd_dev->ptr = 0;
+        initrd_dev->impl = 0;
+
+        root_nodes = (struct inode *)kmalloc(sizeof(struct inode) * initrd_header->nfiles);
+        nroot_nodes = initrd_header->nfiles;
+
+        for (i = 0; i < initrd_header->nfiles; i++)
+        {
+                file_headers[i].offset += location;
+                strcpy(root_nodes[i].name, &file_headers[i].name);
+                root_nodes[i].mask = root_nodes[i].uid = NULL;
+                root_nodes[i].gid = NULL;
+                root_nodes[i].length = file_headers[i].length;
+                root_nodes[i].inode = i;
+                root_nodes[i].flags = FS_FILE;
+                root_nodes[i].read = &initrd_read;
+                root_nodes[i].write = NULL;
+                root_nodes[i].readdir = NULL;
+                root_nodes[i].finddir = NULL;
+                root_nodes[i].open = NULL;
+                root_nodes[i].close = NULL;
+                root_nodes[i].impl = NULL;
+        }
+
+        return initrd_root;
 }
