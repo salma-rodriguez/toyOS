@@ -50,3 +50,23 @@ static struct inode *initrd_finddir(struct inode *inode, char *name)
                         return &root_nodes[i];
         return 0;
 }
+
+struct inode *initialize_initrd(uint32_t location)
+{
+        initrd_header = (struct initrd_header *)locatioln;
+        file_headers = (initrd_file_header *)(location+sizeof(struct initrd_header));
+        initrd_root = (struct inode *)kmalloc(sizeof(struct inode));
+        initrd_root->mask = initrd_root->uid = NULL;
+        initrd_root->gid = NULL;
+        initrd_root->inode = NULL;
+        initrd_root->length = NULL;
+        initrd_root->flags = FS_DIRECTORY;
+        initrd_root->read = NULL;
+        initrd_root->write = NULL;
+        initrd_root->open = NULL;
+        initrd_root->close = NULL;
+        initrd_root->readdir =  &initrd_readdir;
+        initrd_root->finddir = &initrd_finddir;
+        initrd_root->ptr = NULL;
+        initrd_root->impl = NULL;
+}
