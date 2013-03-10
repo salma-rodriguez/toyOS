@@ -16,6 +16,6 @@ struct initrd_file_header
         uint32_t length;
 };
 
-struct inode *initialize_initrd(uint32_t location);
+struct fs_node *initialize_initrd(uint32_t);
 
 #endif /* _INITRD_H_ */

@@ -5,15 +5,15 @@
 struct initrd_header *initrd_header;
 struct initrd_file_header *file_headers;
 
-struct inode *initrd_dev;
-struct inode *initrd_root;
-struct inode *root_nodes;
+struct fs_node *initrd_dev;
+struct fs_node *initrd_root;
+struct fs_node *root_nodes;
 
 int nroot_nodes;
 
 struct dirent dirent;
 
-static uint32_t initrd_read(struct inode *node, off_t offset, size_t size, uint8_t *buffer)
+static uint32_t initrd_read(struct fs_node *node, off_t offset, size_t size, uint8_t *buffer)
 {
         struct initrd_file_header header;
         header = file_headers[node->inode];
@@ -25,9 +25,9 @@ static uint32_t initrd_read(struct inode *node, off_t offset, size_t size, uint8
         return size;
 }
 
-static struct dirent *initrd_readdir(struct inode *inode, uint32_t index)
+static struct dirent *initrd_readdir(struct fs_node *node, uint32_t index)
 {
-        if (inode == initrd_root && index == 0)
+        if (node == initrd_root && index == 0)
         {
                 strcpy(dirent.name, "dev");
                 dirent.name[3] = 0;
@@ -43,10 +43,10 @@ static struct dirent *initrd_readdir(struct inode *inode, uint32_t index)
         return &dirent;
 }
 
-static struct inode *initrd_finddir(struct inode *inode, char *name)
+static struct fs_node *initrd_finddir(struct fs_node *node, char *name)
 {
         int i;
-        if (inode == initrd_root && !strcmp(name, "dev"))
+        if (node == initrd_root && !strcmp(name, "dev"))
                 return initrd_dev;
         for (i = 0; i < nroot_nodes; i++)
                 if (!strcmp(name, root_nodes[i].name))
@@ -54,13 +54,13 @@ static struct inode *initrd_finddir(struct inode *inode, char *name)
         return 0;
 }
 
-struct inode *initialize_initrd(uint32_t location)
+struct fs_node *initialize_initrd(uint32_t location)
 {
         int i;
         // root directory
         initrd_header = (struct initrd_header *)location;
         file_headers = (struct initrd_file_header *)(location+sizeof(struct initrd_header));
-        initrd_root = (struct inode *)kmalloc(sizeof(struct inode));
+        initrd_root = (struct fs_node *)kmalloc(sizeof(struct fs_node));
         initrd_root->mask = initrd_root->uid = 0;
         initrd_root->gid = 0;
         initrd_root->inode = 0;
@@ -75,7 +75,7 @@ struct inode *initialize_initrd(uint32_t location)
         initrd_root->ptr = 0;
         initrd_root->impl = 0;
         // /dev directory
-        initrd_dev = (struct inode *)kmalloc(sizeof(struct inode));
+        initrd_dev = (struct fs_node *)kmalloc(sizeof(struct fs_node));
         strcpy(initrd_dev->name, "dev");
         initrd_dev->mask = 0;
         initrd_dev->uid = 0;
@@ -92,7 +92,7 @@ struct inode *initialize_initrd(uint32_t location)
         initrd_dev->ptr = 0;
         initrd_dev->impl = 0;
 
-        root_nodes = (struct inode *)kmalloc(sizeof(struct inode) * initrd_header->nfiles);
+        root_nodes = (struct fs_node *)kmalloc(sizeof(struct fs_node) * initrd_header->nfiles);
         nroot_nodes = initrd_header->nfiles;
 
         for (i = 0; i < initrd_header->nfiles; i++)
