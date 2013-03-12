@@ -151,7 +151,7 @@ static size_t contract(size_t new_size, struct heap *heap)
 static int32_t find_smallest_hole(size_t size, uint8_t page_align, struct heap *heap)
 {
 	int i;
-	off_t offset;
+	soff_t offset;
 	ssize_t hole_size;
 	uint32_t location;
 	struct header *header;
