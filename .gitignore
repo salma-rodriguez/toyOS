@@ -2,5 +2,6 @@
 *.img
 *.iso
 *.txt
+generator
 *.bochsout
 kernel.bin
