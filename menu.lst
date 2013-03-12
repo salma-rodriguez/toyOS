@@ -1,0 +1,3 @@
+title My Crappy Kernel
+kernel /boot/kernel.bin
+module /initrd.img
