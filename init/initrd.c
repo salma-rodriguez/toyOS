@@ -1,13 +1,14 @@
 #include <string.h>
 #include <kernel/heap.h>
+#include <kernel/types.h>
 #include <kernel/initrd.h>
 
 struct initrd_header *initrd_header;
 struct initrd_file_header *file_headers;
 
 struct fs_node *initrd_dev;
-struct fs_node *initrd_root;
 struct fs_node *root_nodes;
+struct fs_node *initrd_root;
 
 int nroot_nodes;
 
@@ -51,7 +52,7 @@ static struct fs_node *initrd_finddir(struct fs_node *node, char *name)
         for (i = 0; i < nroot_nodes; i++)
                 if (!strcmp(name, root_nodes[i].name))
                         return &root_nodes[i];
-        return 0;
+        return NULL;
 }
 
 struct fs_node *initialize_initrd(uint32_t location)
@@ -61,18 +62,19 @@ struct fs_node *initialize_initrd(uint32_t location)
         initrd_header = (struct initrd_header *)location;
         file_headers = (struct initrd_file_header *)(location+sizeof(struct initrd_header));
         initrd_root = (struct fs_node *)kmalloc(sizeof(struct fs_node));
-        initrd_root->mask = initrd_root->uid = 0;
+        initrd_root->uid = 0;
         initrd_root->gid = 0;
+        initrd_root->mask = 0;
         initrd_root->inode = 0;
         initrd_root->length = 0;
         initrd_root->flags = FS_DIRECTORY;
-        initrd_root->read = 0;
-        initrd_root->write = 0;
-        initrd_root->open = 0;
-        initrd_root->close = 0;
+        initrd_root->read = NULL;
+        initrd_root->write = NULL;
+        initrd_root->open = NULL;
+        initrd_root->close = NULL;
         initrd_root->readdir =  &initrd_readdir;
         initrd_root->finddir = &initrd_finddir;
-        initrd_root->ptr = 0;
+        initrd_root->ptr = NULL;
         initrd_root->impl = 0;
         // /dev directory
         initrd_dev = (struct fs_node *)kmalloc(sizeof(struct fs_node));
@@ -83,13 +85,13 @@ struct fs_node *initialize_initrd(uint32_t location)
         initrd_dev->inode = 0;
         initrd_dev->length = 0;
         initrd_dev->flags = FS_DIRECTORY;
-        initrd_dev->read = 0;
-        initrd_dev->write = 0;
-        initrd_dev->open = 0;
-        initrd_dev->close = 0;
+        initrd_dev->read = NULL;
+        initrd_dev->write = NULL;
+        initrd_dev->open = NULL;
+        initrd_dev->close = NULL;
         initrd_dev->readdir = &initrd_readdir;
         initrd_dev->finddir = &initrd_finddir;
-        initrd_dev->ptr = 0;
+        initrd_dev->ptr = NULL;
         initrd_dev->impl = 0;
 
         root_nodes = (struct fs_node *)kmalloc(sizeof(struct fs_node) * initrd_header->nfiles);
