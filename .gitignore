@@ -1,4 +1,6 @@
 *.o
+*.img
 *.iso
+*.txt
 *.bochsout
 kernel.bin
