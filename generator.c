@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 struct initrd_header
 {
@@ -6,19 +8,20 @@ struct initrd_header
         char name[64];
         unsigned int offset;
         unsigned int length;
-}
+};
 
 int main(char argc, char **argv)
 {
-        int i;
+        int i, nheaders;
         unsigned int off;
         FILE *stream, *wstream;
-        int nheaders = (arc-1)/2;
         unsigned char *buf, *data;
         struct initrd_header headers[64];
+
+        nheaders = (argc-1)/2;
         printf("size of header: %d\n", sizeof(struct initrd_header));
         off = sizeof(struct initrd_header) * 64 + sizeof(int);
-        for (i = 0; i < nheade; i++)
+        for (i = 0; i < nheaders; i++)
         {
                 printf("writing file %s->%s at 0x%x\n", argv[i*2+1],
                         argv[i*2+2], off);
