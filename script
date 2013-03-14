@@ -11,6 +11,7 @@ function clean {
 }
 
 function update {
+        losetup -d /dev/loop0
         losetup /dev/loop0 $DISK
         mount -text2 /dev/loop0 /mnt
         cp bin/kernel.bin /mnt/boot/
