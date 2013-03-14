@@ -34,7 +34,7 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 	printk("initializing...\n");
 
         // disable_interrupts();
-
+	
 	init_descriptor_tables();
 	
         initrd_location = *((uint32_t *)mbd->mods_addr);
