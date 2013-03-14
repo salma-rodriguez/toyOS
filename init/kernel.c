@@ -52,18 +52,16 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 
         // enable_interrupts();
 
-        printk("after initializing paging and all that\n");
-
 	fs_root = (struct fs_node *)initialize_initrd(initrd_location);
 
         /* testing vfs { */
 
                 i = 0;
                 node = NULL;
-                while ((node = readdir_fs(fs_root, i)) != 0)
+                while ((node = readdir_fs(fs_root, i)) != NULL)
                 {
-                        monitor_write("Found file ");
-                        monitor_write(node->name);
+                        printk("Found file ");
+                        printk(node->name);
                         fsnode = finddir_fs(fs_root, node->name);
                         if ((fsnode->flags&0x7) == FS_DIRECTORY)
                                 printk("\n\t(directory)\n");
