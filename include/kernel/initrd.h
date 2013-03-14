@@ -2,6 +2,7 @@
 #define _INITRD_H_
 
 #include <kernel/fs.h>
+#include <kernel/types.h>
 
 struct initrd_header
 {
@@ -10,9 +11,9 @@ struct initrd_header
 
 struct initrd_file_header
 {
-        off_t offset;
         uint8_t magic;
         int8_t name[64];
+        off_t offset;
         uint32_t length;
 };
 
