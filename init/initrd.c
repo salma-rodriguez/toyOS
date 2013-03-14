@@ -40,12 +40,8 @@ static struct dirent *initrd_readdir(struct fs_node *node, uint32_t index)
         if (index-1 >= nroot_nodes)
                 return NULL;
 
-        printk("node at index: %d\n", index);
-
         strcpy(dirent.name, root_nodes[index-1].name);
         dirent.name[strlen(root_nodes[index-1].name)] = 0;
-
-        printk("name of node: %s\n", dirent.name);
 
         dirent.ino = root_nodes[index-1].inode;
         return &dirent;
@@ -100,8 +96,6 @@ struct fs_node *initialize_initrd(uint32_t location)
         initrd_dev->finddir = &initrd_finddir;
         initrd_dev->ptr = NULL;
         initrd_dev->impl = 0;
-
-        printk("initrd number of files: %d\n", initrd_header->nfiles);
 
         root_nodes = (struct fs_node *)kmalloc(sizeof(struct fs_node) * initrd_header->nfiles);
         nroot_nodes = initrd_header->nfiles;
