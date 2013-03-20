@@ -19,6 +19,16 @@ typedef struct fs_node *(*finddir_t) (struct fs_node *, char *);
 typedef struct dirent *(*readdir_t) (struct fs_node *, uint32_t);
 typedef uint32_t (*rw_t) (struct fs_node *, off_t, size_t, uint8_t *);
 
+struct file_operations
+{
+        oc_t open;
+        oc_t close;
+        rw_t read;
+        rw_t write;
+        readdir_t readdir;
+        finddir_t finddir;
+};
+
 struct fs_node
 {
 	uint32_t uid;
@@ -30,14 +40,8 @@ struct fs_node
 	uint32_t length;
 	char name[128];
 
-	oc_t open;
-	oc_t close;
-	rw_t read;
-	rw_t write;
-	readdir_t readdir;
-	finddir_t finddir;
-
 	struct fs_node *ptr;
+        struct file_operations fops;
 };
 
 struct dirent

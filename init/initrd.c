@@ -27,6 +27,15 @@ static uint32_t initrd_read(struct fs_node *node, off_t offset, size_t size, uin
         return size;
 }
 
+static uint32_t initrd_write(struct fs_node *node, off_t offset, size_t size, uint8_t *buffer)
+{
+        struct initrd_file_header header;
+        header = file_headers[node->inode];
+        memcpy((uint8_t *)(header.offset+1), buffer, size);
+        header.offset += header.offset+offset;
+        return size;
+}
+
 static struct dirent *initrd_readdir(struct fs_node *node, uint32_t index)
 {
         if (node == initrd_root && index == 0)
@@ -65,22 +74,24 @@ struct fs_node *initialize_initrd(uint32_t location)
         initrd_header = (struct initrd_header *)location;
         file_headers = (struct initrd_file_header *)(location+sizeof(struct initrd_header));
         initrd_root = (struct fs_node *)kmalloc(sizeof(struct fs_node));
+        // initrd_root.fops = (struct file_operations)kmalloc(sizeof(struct file_operations));
         initrd_root->uid = 0;
         initrd_root->gid = 0;
         initrd_root->mask = 0;
         initrd_root->inode = 0;
         initrd_root->length = 0;
         initrd_root->flags = FS_DIRECTORY;
-        initrd_root->read = NULL;
-        initrd_root->write = NULL;
-        initrd_root->open = NULL;
-        initrd_root->close = NULL;
-        initrd_root->readdir =  &initrd_readdir;
-        initrd_root->finddir = &initrd_finddir;
+        initrd_root->fops.read = NULL;
+        initrd_root->fops.write = NULL;
+        initrd_root->fops.open = NULL;
+        initrd_root->fops.close = NULL;
+        initrd_root->fops.readdir =  &initrd_readdir;
+        initrd_root->fops.finddir = &initrd_finddir;
         initrd_root->ptr = NULL;
         initrd_root->impl = 0;
         // /dev directory
         initrd_dev = (struct fs_node *)kmalloc(sizeof(struct fs_node));
+        // initrd_dev->fops = (struct file_operations)kmalloc(sizeof(struct file_operations));
         strcpy(initrd_dev->name, "dev");
         initrd_dev->mask = 0;
         initrd_dev->uid = 0;
@@ -88,12 +99,12 @@ struct fs_node *initialize_initrd(uint32_t location)
         initrd_dev->inode = 0;
         initrd_dev->length = 0;
         initrd_dev->flags = FS_DIRECTORY;
-        initrd_dev->read = NULL;
-        initrd_dev->write = NULL;
-        initrd_dev->open = NULL;
-        initrd_dev->close = NULL;
-        initrd_dev->readdir = &initrd_readdir;
-        initrd_dev->finddir = &initrd_finddir;
+        initrd_dev->fops.read = NULL;
+        initrd_dev->fops.write = NULL;
+        initrd_dev->fops.open = NULL;
+        initrd_dev->fops.close = NULL;
+        initrd_dev->fops.readdir = &initrd_readdir;
+        initrd_dev->fops.finddir = &initrd_finddir;
         initrd_dev->ptr = NULL;
         initrd_dev->impl = 0;
 
@@ -110,12 +121,12 @@ struct fs_node *initialize_initrd(uint32_t location)
                 root_nodes[i].length = file_headers[i].length;
                 root_nodes[i].inode = i;
                 root_nodes[i].flags = FS_FILE;
-                root_nodes[i].read = &initrd_read;
-                root_nodes[i].write = NULL;
-                root_nodes[i].readdir = NULL;
-                root_nodes[i].finddir = NULL;
-                root_nodes[i].open = NULL;
-                root_nodes[i].close = NULL;
+                root_nodes[i].fops.read = &initrd_read;
+                root_nodes[i].fops.write = NULL;
+                root_nodes[i].fops.readdir = NULL;
+                root_nodes[i].fops.finddir = NULL;
+                root_nodes[i].fops.open = NULL;
+                root_nodes[i].fops.close = NULL;
                 root_nodes[i].impl = 0;
         }
 
