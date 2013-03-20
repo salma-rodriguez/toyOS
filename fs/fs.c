@@ -17,16 +17,14 @@ void close_fs(struct fs_node *node)
 
 uint32_t read_fs(struct fs_node *node, off_t offset, size_t size, uint8_t *buffer)
 {
-        if (node->read != NULL)
-                return node->read(node, offset, size, buffer);
-        return 0;
+        return node->read != NULL?
+                node->read(node, offset, size, buffer): -1;
 }
 
 uint32_t write_fs(struct fs_node *node, off_t offset, size_t size, uint8_t *buffer)
 {
-        if (node->write != NULL)
-                return node->write(node, offset, size, buffer);
-        return 0;
+        return node->write != NULL?
+                node->write(node, offset, size, buffer): -1;
 }
 
 struct dirent *readdir_fs(struct fs_node *node, uint32_t index)
