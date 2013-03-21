@@ -8,7 +8,7 @@ static struct page_table *clone_table(struct page_table *src, uint32_t *phys_add
         struct page_table *table;
 
         table = (struct page_table *)kmalloc_ap(sizeof(struct page_table), phys_addr);
-        memset(table, 0, sizeof(struct page_directory);
+        memset(table, 0, sizeof(struct page_directory));
 
         for (i = 0; i < 1024; i++)
         {
@@ -24,7 +24,7 @@ static struct page_table *clone_table(struct page_table *src, uint32_t *phys_add
 
                 copy_page_physical(src->pages[i].frame*0x1000, table->pages[i].frame*0x1000);
         }
-
+        return table;
 }
 
 struct page_directory *clone_directory(struct page_directory *src)
