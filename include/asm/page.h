@@ -92,6 +92,7 @@ static inline void flush_tlb()
 	__asm__ __volatile__ ("movl %0, %%cr3" :: "r" (page_dir_addr));
 }
 
+extern struct page_directory *kernel_directory;
 extern struct page_directory *current_directory;
 
 void init_paging();
