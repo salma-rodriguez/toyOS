@@ -77,7 +77,7 @@ static inline __u32 get_faulting_address()
 
 static inline void switch_page_directory(struct page_directory *dir)
 {
-	__asm__ __volatile__ ("movl %0, %%cr3" :: "r" (dir->tables_physical));
+	__asm__ __volatile__ ("movl %0, %%cr3" :: "r" (dir->physical_addr));
 }
 
 static inline void flush_tlb_single(__u32 addr)
@@ -96,6 +96,7 @@ extern struct page_directory *kernel_directory;
 extern struct page_directory *current_directory;
 
 void init_paging();
-struct page *get_page(uint32_t address, int creat, struct page_directory *dir);
+void alloc_frame(struct page *, int, int);
+struct page *get_page(uint32_t, int, struct page_directory *);
 
 #endif /* _PAGE_H_ */

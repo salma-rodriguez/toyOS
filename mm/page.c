@@ -19,6 +19,8 @@ extern uint32_t placement_addr;
 struct page_directory *kernel_directory;
 struct page_directory *current_directory;
 
+extern struct page_directory *clone_directory(struct page_directory *);
+
 static void set_frame(uint32_t frame_addr)
 {
 	off_t off;
@@ -89,7 +91,7 @@ void free_frame(struct page *page)
 void init_paging()
 {
 	size_t sz;
-	uint32_t i;
+	uint32_t i, phys;
 	uint32_t mem_end_page;
 
 	printk("paging...\t\t");
@@ -104,7 +106,12 @@ void init_paging()
 	kernel_directory = (struct page_directory *)
 		kmalloc_a(sizeof(struct page_directory));
 	memset(kernel_directory, 0, sizeof(struct page_directory));
+
+	// don't do this...
 	current_directory = kernel_directory;
+
+	// do this instead...
+	kernel_directory->physical_addr = (uint32_t)kernel_directory->tables_physical;
 
 	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += PAGE_SIZ)
 		get_page(i, 1, kernel_directory);
@@ -124,6 +131,9 @@ void init_paging()
 	enable_paging();
 
 	kheap = create_heap(KHEAP_START, KHEAP_START + KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
+
+	current_directory = clone_directory(kernel_directory);
+        switch_page_directory(current_directory);
 
 	printk("done!\n");
 }
