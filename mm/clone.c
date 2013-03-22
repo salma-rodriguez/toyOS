@@ -1,4 +1,7 @@
+#include <string.h>
 #include <asm/page.h>
+#include <kernel/heap.h>
+#include <kernel/printk.h>
 
 extern void copy_page_physical(uint32_t, uint32_t);
 
@@ -12,7 +15,7 @@ static struct page_table *clone_table(struct page_table *src, uint32_t *phys_add
 
         for (i = 0; i < 1024; i++)
         {
-                if (!src->pages[i].frame)
+                if (src->pages[i].frame)
                         continue;
                 alloc_frame(&table->pages[i], 0, 0);
 
@@ -22,7 +25,7 @@ static struct page_table *clone_table(struct page_table *src, uint32_t *phys_add
                 if (src->pages[i].accessed) table->pages[i].accessed = 1;
                 if (src->pages[i].dirty) table->pages[i].dirty = 1;
 
-                copy_page_physical(src->pages[i].frame*0x1000, table->pages[i].frame*0x1000);
+                copy_page_physical(src->pages[i].frame*PAGE_SIZ, table->pages[i].frame*PAGE_SIZ);
         }
         return table;
 }
@@ -32,12 +35,13 @@ struct page_directory *clone_directory(struct page_directory *src)
         int i;
         off_t offset;
         uint32_t phys;
+        struct page_directory *dir;
 
-        struct page_directory *dir = (struct page_directory *)kmalloc_ap(sizeof(struct page_directory), &phys);
+        dir = (struct page_directory *)kmalloc_ap(sizeof(struct page_directory), &phys);
         memset(dir, 0, sizeof(struct page_directory));
         
-        offset = (off_t)(dir->tables_physical - dir);
-        dir->physicalAddr = phys + offset;
+        offset = (off_t)((uint32_t)dir->tables_physical - (uint32_t)dir);
+        dir->physical_addr = phys + offset;
 
         for (i = 0; i < 1024; i++)
         {
@@ -51,5 +55,6 @@ struct page_directory *clone_directory(struct page_directory *src)
                         dir->tables_physical[i] = phys | 0x07;
                 }
         }
+
         return dir;
 }
