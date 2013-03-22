@@ -11,13 +11,15 @@ ASFLAGS	= -felf
 BIN	= bin
 TARGET	= $(BIN)/$(BUILD)
 
-VPATH	= boot lib init kernel mm fs
+VPATH	= boot lib init kernel mm fs sched
 MKDIR	= $(CURDIR)/$(BIN)
 
 # under boot
 ASSRCS	+= boot.s
 # under kernel
 ASSRCS  += interrupt.s flush.s
+# under sched
+ASSRCS  += process.s
 # under lib
 SOURCES += string.c ctype.c printf.c array.c ordered_map.c
 # under init
@@ -25,7 +27,7 @@ SOURCES += monitor.c kernel.c initrd.c
 # under kernel
 SOURCES += isr.c tables.c timer.c common.c panic.c bug.c handler.c
 # under mm
-SOURCES += page.c heap.c
+SOURCES += page.c heap.c clone.c
 # under fs
 SOURCES += fs.c
 
