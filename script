@@ -6,7 +6,7 @@ FILE='grub-0.97-i386-pc.tar.gz'
 DISK='floppy.img'
 
 function clean {
-        make clean > /dev/null 2>&1
+        rm -rf bin
         rm -f *.img .bochsout
 }
 
