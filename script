@@ -7,11 +7,12 @@ DISK='floppy.img'
 
 function clean {
         make clean > /dev/null 2>&1
-        rm -f $DISK .bochsout
+        rm -f *.img .bochsout
 }
 
-function update {
-        losetup -d /dev/loop0
+function kernel {
+        losetup -d /dev/loop0 \
+                > /dev/null 2>&1
         losetup /dev/loop0 $DISK
         mount -text2 /dev/loop0 /mnt
         cp bin/kernel.bin /mnt/boot/
@@ -19,18 +20,35 @@ function update {
         losetup -d /dev/loop0
 }
 
+function initrd {
+        losetup -d /dev/loop0 \
+                > /dev/null 2>&1
+        losetup /dev/loop0 $DISK
+        mount -text2 /dev/loop0 /mnt
+        cp initrd.img /mnt/initrd.img
+        umount /dev/loop0
+        losetup -d /dev/loop0
+}
+
+function update {
+        if [ "$1" = "kernel" ]
+        then
+                kernel
+        else
+                initrd
+        fi
+}
+
+function generate {
+        gcc -o generator generator.c
+        ./generator sample.txt sample.txt
+        rm -f generator
+}
+
 function run {
         losetup -d /dev/loop0
         losetup /dev/loop0 $DISK
         bochs -f .bochsrc
-        losetup -d /dev/loop0
-}
-
-function initrd {
-        losetup /dev/loop0 $DISK
-        mount /dev/loop0 /mnt
-        cp initrd.img /mnt/initrd.img
-        umount /dev/loop0
         losetup -d /dev/loop0
 }
 
@@ -54,82 +72,34 @@ FTP
         cd ../../..
         cp menu.lst /mnt/boot/grub/menu.lst
         echo "(fd0) /dev/loop0" > /mnt/boot/grub/device.map
+        grub --device-map=/mnt/boot/grub/device.map /dev/loop0 <<GRUB
+        root (fd0)
+        setup (fd0)
+GRUB
         umount /dev/loop0
         losetup -d /dev/loop0
         rm -r grub*
+        generate
+        update initrd
+        update kernel
 }
 
-# if we still want to create
-# a disk manually... vfs won't work...
-
-# old, useless functions, kept for historical reasons {
-
-function add_grub {
-ftp -in $HOST <<FTP
-quote user $USER
-type binary
-cd gnu/grub
-get grub-0.97-i386-pc.tar.gz
-bye
-FTP
-tar xf $FILE
-cd `expr substr $FILE 1 17`
-cd boot/grub
-cat stage1 stage2 > $DISK
-mv $DISK ../../..
-cd ../../..
-rm -r grub*
-}
-
-function add_pad {
-dd if=/dev/zero of=pad bs=1 count=750 \
-	> /dev/null 2>&1
-cat pad >> $DISK
-rm -f pad
-}
-
-function add_kernel {
-make > /dev/null 2>&1
-cat bin/kernel.bin >> $DISK \
-	> /dev/null 2>&1
-}
-
-function build {
-clean
-add_grub
-add_pad
-add_kernel
-}
-
-# }
 
 case "$1" in
 	clean)
 		clean
 		;;
-	build)
-		build
-		;;
-	pad)
-		add_pad
-		;;
-	grub)
-		add_grub
-		;;
-	kernel)
-		add_kernel
-		;;
 	run)
 		run
 		;;
+	generate)
+	        generate
+                ;;
 	update)
-	        update
+	        update $2
                 ;;
         make)
                 make
-                ;;
-        initrd)
-                initrd
                 ;;
 	esac
 exit 0
