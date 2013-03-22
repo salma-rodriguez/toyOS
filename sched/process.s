@@ -7,7 +7,7 @@ copy_page_physical:
         mov ebx, [esp+12]
         mov ecx, [esp+16]
         mov edx, cr0
-        and adx, 0x7fffffff
+        and edx, 0x7fffffff
         mov cr0, edx
         mov edx, (1 << 10)
 
