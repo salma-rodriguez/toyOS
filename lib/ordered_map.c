@@ -36,7 +36,7 @@ struct ordered_array place_ordered_array(void *addr, size_t size, compare_t fun)
 
 void destroy_ordered_array(struct ordered_array *arr)
 {
-	// kfree(arr->array);
+	kfree(arr->array);
 }
 
 static void insert(any_t item, struct ordered_array *arr)
@@ -51,7 +51,7 @@ static void insert(any_t item, struct ordered_array *arr)
 	else {
 		t1 = arr->array[i];
 		arr->array[i] = item;
-		while (i < arr->size)
+		while (i < arr->count)
 		{
 			i++;
 			t2 = arr->array[i];
