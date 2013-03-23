@@ -20,9 +20,10 @@ How to Run
 
 Need Bochs, GCC and Netwide Assembler (NASM)
 
-Run script with 'build' option for clean build.
-Run script with 'clean' option to clean directories.
+Run GNU 'make' command.
+Run script with 'make' option to build floppy image.
 
 Run script with 'run' option to run Bochs.
-When GRUB loads, boot with 'kernel 200+blocksize' followed by 'boot' command,
-where blocksize is the size of the 'kernel' binary in 512-byte blocks.
+When GRUB loads, simply boot the kernel by hitting 'Enter' key. Enjoy!
+
+Run script with 'clean' option to clean working tree.
