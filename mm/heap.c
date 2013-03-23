@@ -156,8 +156,8 @@ static size_t contract(size_t new_size, struct heap *heap)
 		free_frame(get_page(heap->start_address+i, 0, kernel_directory));
 		i -= PAGE_SIZ;
 	}
-	heap->end_address = heap->start_address + new_size;
 
+	heap->end_address = heap->start_address + new_size;
 	return new_size;
 }
 
@@ -323,7 +323,7 @@ void free(void *p, struct heap *heap)
 	do_add = 1;
 
 	test_footer = (struct footer *)((uint32_t)header - sizeof(struct footer));
-	if (test_footer->magic == HEAP_MAGIC &&
+	if ((test_footer->magic == HEAP_MAGIC) &&
 		test_footer->header->is_hole)
 	{
 		cache_size = header->size;
@@ -365,7 +365,7 @@ void free(void *p, struct heap *heap)
 			if (iterator < heap->index.size)
 				heap->index.remove(iterator, &heap->index);
 		}
-		if (do_add == 1)
+		if (do_add)
 			heap->index.insert((void *)header, &heap->index);
 	}
 }
