@@ -33,8 +33,6 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 
 	printk("initializing...\n");
 
-        // disable_interrupts();
-	
 	init_descriptor_tables();
 	
         initrd_location = *((uint32_t *)mbd->mods_addr);
@@ -46,11 +44,25 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 
         init_timer(PIT_FREQUENCY);
 
-	// a = kmalloc(8);
+	a = kmalloc(8);
 
 	init_paging();
 
-        // enable_interrupts();
+        /* testing memory allocation { */
+
+               b = kmalloc(8);
+               c = kmalloc(8);
+               
+               printk("a: %lx, b: %lx\nc: %lx", a, b, c);
+               
+               kfree((void *)c);
+               kfree((void *)b);
+               
+               d = kmalloc(12);
+               
+               printk(", d: %lx\n", d);
+
+        /* } */
 
 	fs_root = (struct fs_node *)initialize_initrd(initrd_location);
 
@@ -78,29 +90,13 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 
         /* } */
 
-        /* testing memory allocation { */
-
-               //  b = kmalloc(8);
-               //  c = kmalloc(8);
-               // 
-               //  printk("a: %lx, b: %lx\nc: %lx", a, b, c);
-               // 
-               //  kfree((void *)c);
-               //  kfree((void *)b);
-               // 
-               //  d = kmalloc(12);
-               // 
-               //  printk(", d: %lx\n", d);
-
+        /* testing division by zero { */
+                // i = 500 / 0;
         /* } */
 
-        /* testing division by zero { */
-
-                // int i;
-                // i = 500 / 0;
-                // testing page fault
-                /* uint32_t *ptr = (uint32_t *)0xA0000000;
-                uint32_t do_page_fault = *ptr; */
+        /* testing page fault { */
+                uint32_t *ptr = (uint32_t *)0xA0000000;
+                int32_t do_page_fault = *ptr;
 
         /* } */
 
