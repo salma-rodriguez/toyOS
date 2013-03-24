@@ -11,8 +11,7 @@ function clean {
 }
 
 function kernel {
-        losetup -d /dev/loop0 \
-                > /dev/null 2>&1
+        losetup -d /dev/loop0 > /dev/null 2>&1
         losetup /dev/loop0 $DISK
         mount -text2 /dev/loop0 /mnt
         cp bin/kernel.bin /mnt/boot/
@@ -21,8 +20,7 @@ function kernel {
 }
 
 function initrd {
-        losetup -d /dev/loop0 \
-                > /dev/null 2>&1
+        losetup -d /dev/loop0 > /dev/null 2>&1
         losetup /dev/loop0 $DISK
         mount -text2 /dev/loop0 /mnt
         cp initrd.img /mnt/initrd.img
@@ -46,7 +44,7 @@ function generate {
 }
 
 function run {
-        losetup -d /dev/loop0
+        losetup -d /dev/loop0 > /dev/null 2>&1
         losetup /dev/loop0 $DISK
         bochs -f .bochsrc
         losetup -d /dev/loop0
@@ -92,9 +90,6 @@ case "$1" in
 	run)
 		run
 		;;
-	generate)
-	        generate
-                ;;
 	update)
 	        update $2
                 ;;
