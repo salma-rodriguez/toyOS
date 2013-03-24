@@ -95,8 +95,8 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
         /* } */
 
         /* testing page fault { */
-                uint32_t *ptr = (uint32_t *)0xA0000000;
-                int32_t do_page_fault = *ptr;
+                // uint32_t *ptr = (uint32_t *)0xA0000000;
+                // int32_t do_page_fault = *ptr;
 
         /* } */
 
