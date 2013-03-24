@@ -14,6 +14,22 @@ TARGET	= $(BIN)/$(BUILD)
 VPATH	= boot lib init kernel mm fs sched
 MKDIR	= $(CURDIR)/$(BIN)
 
+define CMP
+	@echo " [CC] $@" && $(CC)
+endef
+
+define ASM
+	@echo " [AS] $@" && $(AS)
+endef
+
+define LDD
+	@echo " [LD] $@" && $(LD)
+endef
+
+define REM
+	@echo " [RM] $(MKDIR)" && ${RM}
+endef
+
 # under boot
 ASSRCS	+= boot.s
 # under kernel
@@ -39,11 +55,11 @@ $(shell `mkdir -p $(MKDIR)`)
 all: $(TARGET)
 
 $(TARGET) : $(OBJS) $(ASOBJS)
-	$(LD) $(LDFLAGS) -o $(TARGET) $(OBJS) $(ASOBJS)
+	$(LDD) $(LDFLAGS) -o $(TARGET) $(OBJS) $(ASOBJS)
 $(BIN)/%.o : %.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CMP) $(CFLAGS) -o $@ $<
 $(BIN)/%.o : %.s
-	$(AS) $(ASFLAGS) -o $@ $< 
+	$(ASM) $(ASFLAGS) -o $@ $< 
 clean :
-	${RM} -r $(BIN)
+	$(REM) -r $(BIN)
 .PHONY : clean
