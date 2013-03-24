@@ -41,7 +41,7 @@ function update {
 
 function generate {
         gcc -o generator generator.c
-        ./generator sample.txt sample.txt
+        ./generator sample.txt sample.txt another.txt another.txt
         rm -f generator
 }
 
