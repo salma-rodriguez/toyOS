@@ -1,4 +1,5 @@
 #include <array.h>
+#include <assert.h>
 #include <string.h>
 #include <kernel/heap.h>
 
@@ -12,7 +13,6 @@ struct ordered_array create_ordered_array(size_t size, compare_t fun)
 	to_ret.array = (void *)kmalloc(size * sizeof(any_t));
 	memset(to_ret.array, 0, size * sizeof(any_t));
 	to_ret.count = 0;
-	to_ret.size = size;
 	to_ret.compare = fun;
 	to_ret.insert = insert;
 	to_ret.remove = remove;
@@ -26,7 +26,6 @@ struct ordered_array place_ordered_array(void *addr, size_t size, compare_t fun)
 	to_ret.array = (any_t *)addr;
 	memset(to_ret.array, 0, size * sizeof(any_t));
 	to_ret.count = 0;
-	to_ret.size = size;
 	to_ret.compare = fun;
 	to_ret.remove = remove;
 	to_ret.lookup = lookup;
@@ -41,7 +40,7 @@ void destroy_ordered_array(struct ordered_array *arr)
 
 static void insert(any_t item, struct ordered_array *arr)
 {
-	// ASSERT(array->compare);
+	ASSERT(arr->compare);
 	any_t t1, t2;
 	uint32_t i = 0;
 	while(i < arr->count && arr->compare(arr->array[i], item))
@@ -64,7 +63,7 @@ static void insert(any_t item, struct ordered_array *arr)
 
 static any_t lookup(uint32_t i, struct ordered_array *arr)
 {
-	// ASSERT(i < arr->size);
+	ASSERT(i < arr->count);
 	return arr->array[i];
 }
 
