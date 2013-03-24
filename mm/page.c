@@ -91,7 +91,7 @@ void free_frame(struct page *page)
 void init_paging()
 {
 	size_t sz;
-	uint32_t i, phys;
+	uint32_t i;
 	uint32_t mem_end_page;
 
 	printk("paging...\t\t");
