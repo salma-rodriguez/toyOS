@@ -122,7 +122,7 @@ struct fs_node *initialize_initrd(uint32_t location)
                 root_nodes[i].inode = i;
                 root_nodes[i].flags = FS_FILE;
                 root_nodes[i].fops.read = &initrd_read;
-                root_nodes[i].fops.write = NULL;
+                root_nodes[i].fops.write = &initrd_write;
                 root_nodes[i].fops.readdir = NULL;
                 root_nodes[i].fops.finddir = NULL;
                 root_nodes[i].fops.open = NULL;
