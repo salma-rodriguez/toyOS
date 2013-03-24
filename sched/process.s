@@ -13,13 +13,13 @@ copy_page_physical:
 
 .loop:
         mov eax, [ebx]
-        mov [ebx], eax
+        mov [ecx], eax
         add ebx, 4
         add ecx, 4
         dec edx
         jnz .loop
         mov edx, cr0
-        or ecx, 0x80000000
+        or edx, 0x80000000
         mov cr0, edx
         popf
         pop ebx
