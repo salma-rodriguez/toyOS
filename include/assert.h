@@ -1,9 +1,9 @@
 #ifndef _ASSERT_H_
 #define _ASSERT_H_
 
-#include <
+#include <kernel/bug.h>
 
 #define ASSERT(cond) \
-        if (!cond) BUG("condition not met")
+        if (!(cond)) BUG("condition not met")
 
 #endif /* _ASSERT_H_ */
