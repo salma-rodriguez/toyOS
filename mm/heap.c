@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <asm/page.h>
 #include <kernel/heap.h>
 #include <kernel/types.h>
@@ -86,8 +87,8 @@ struct heap *create_heap(uint32_t start, uint32_t end_addr, uint32_t max, uint8_
 
 	heap = (struct heap *)kmalloc(sizeof(struct heap));
 
-	// ASSERT(start%PAGE_SIZ == 0);
-	// ASSERT(end_addr%PAGE_SIZ == 0);
+	ASSERT(start%PAGE_SIZ == 0);
+	ASSERT(end_addr%PAGE_SIZ == 0);
 	
 	heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, compare);
 
@@ -118,14 +119,14 @@ static void expand(size_t new_size, struct heap *heap)
 	uint32_t i;
 	size_t old_size;
 
-	// ASSERT(new_size > heap->end_address - heap->start_address);
+	ASSERT(new_size > heap->end_address - heap->start_address);
 	
 	if (new_size & 0xFFFFF000) {
 		new_size &= 0xFFFFF000;
 		new_size += PAGE_SIZ;
 	}
 
-	// ASSERT(heap->start_address+new_size <= heap->max_address);
+	ASSERT(heap->start_address+new_size <= heap->max_address);
 	
 	old_size = heap->end_address - heap->start_address;
 	i = old_size;
@@ -142,7 +143,7 @@ static size_t contract(size_t new_size, struct heap *heap)
 	size_t i;
 	size_t old_size;
 
-	// ASSERT(new_size < heap->end_address - heap->start_address);
+	ASSERT(new_size < heap->end_address - heap->start_address);
 	
 	if (new_size & PAGE_SIZ) {
 		new_size &= PAGE_SIZ;
@@ -316,8 +317,8 @@ void free(void *p, struct heap *heap)
 	header = (struct header *)((uint32_t)p - sizeof(struct header));
 	footer = (struct footer *)((uint32_t)header + header->size - sizeof(struct footer));
 
-	// ASSERT(header->magic == HEAP_MAGIC);
-	// ASSERT(footer->magic == HEAP_MAGIC);
+	ASSERT(header->magic == HEAP_MAGIC);
+	ASSERT(footer->magic == HEAP_MAGIC);
 	
 	header->is_hole = 1;
 	do_add = 1;
@@ -343,7 +344,7 @@ void free(void *p, struct heap *heap)
 		while ((iterator < heap->index.count) &&
 			(heap->index.lookup(iterator, &heap->index) != (void *)test_header))
 			iterator++;
-		// ASSERT(iterator < heap->index.count);
+		ASSERT(iterator < heap->index.count);
 		heap->index.remove(iterator, &heap->index);
 	}
 
@@ -359,10 +360,10 @@ void free(void *p, struct heap *heap)
 			footer->header = header;
 		} else {
 			iterator = 0;
-			while ((iterator < heap->index.size) &&
+			while ((iterator < heap->index.count) &&
 				(heap->index.lookup(iterator, &heap->index) != (void *)test_header))
 				iterator++;
-			if (iterator < heap->index.size)
+			if (iterator < heap->index.count)
 				heap->index.remove(iterator, &heap->index);
 		}
 		if (do_add)
