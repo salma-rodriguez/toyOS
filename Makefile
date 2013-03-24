@@ -27,39 +27,43 @@ define LDD
 endef
 
 define REM
-	@echo " [RM] $(MKDIR)" && ${RM}
+	@echo " [RM] $(BIN)" && ${RM}
 endef
 
 # under boot
-ASSRCS	+= boot.s
+ASSRCS += boot.s
 # under kernel
-ASSRCS  += interrupt.s flush.s
+ASSRCS += interrupt.s flush.s
 # under sched
-ASSRCS  += process.s
+ASSRCS += process.s
 # under lib
-SOURCES += string.c ctype.c printf.c array.c ordered_map.c
+CCSRCS += string.c ctype.c printf.c array.c ordered_map.c
 # under init
-SOURCES += monitor.c kernel.c initrd.c
+CCSRCS += monitor.c kernel.c initrd.c
 # under kernel
-SOURCES += isr.c tables.c timer.c common.c panic.c bug.c handler.c
+CCSRCS += isr.c tables.c timer.c common.c panic.c bug.c handler.c
 # under mm
-SOURCES += page.c heap.c clone.c
+CCSRCS += page.c heap.c clone.c
 # under fs
-SOURCES += fs.c
+CCSRCS += fs.c
 
-OBJS	= $(addprefix $(BIN)/,${SOURCES:.c=.o})
+CCOBJS	= $(addprefix $(BIN)/,${CCSRCS:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
 
 $(shell `mkdir -p $(MKDIR)`)
 
 all: $(TARGET)
 
-$(TARGET) : $(OBJS) $(ASOBJS)
-	$(LDD) $(LDFLAGS) -o $(TARGET) $(OBJS) $(ASOBJS)
+$(TARGET) : $(CCOBJS) $(ASOBJS)
+	$(LDD) $(LDFLAGS) -o $(TARGET) $(CCOBJS) $(ASOBJS)
+
 $(BIN)/%.o : %.c
 	$(CMP) $(CFLAGS) -o $@ $<
+
 $(BIN)/%.o : %.s
 	$(ASM) $(ASFLAGS) -o $@ $< 
-clean :
+
+rm:
 	$(REM) -r $(BIN)
-.PHONY : clean
+
+.PHONY: rm

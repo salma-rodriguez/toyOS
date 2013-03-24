@@ -36,7 +36,6 @@ struct array_list {
 };
 
 struct ordered_array {
-	size_t size;
 	size_t count;
 	any_t *array;
 	insert_t insert;
