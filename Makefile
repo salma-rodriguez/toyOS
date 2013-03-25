@@ -63,7 +63,7 @@ $(BIN)/%.o : %.c
 $(BIN)/%.o : %.s
 	$(ASM) $(ASFLAGS) -o $@ $< 
 
-rm:
+clean:
 	$(REM) -r $(BIN)
 
-.PHONY: rm
+.PHONY: clean
