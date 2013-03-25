@@ -13,10 +13,17 @@
 #include <kernel/fs.h>
 #include <kernel/initrd.h>
 
+uint32_t initial_esp;
 extern struct heap *kheap;
 extern uint32_t placement_addr;
 
-int kmain(multiboot_info_t *mbd, uint32_t magic)
+struct misc
+{
+        uint32_t magic;
+        uint32_t initial_stack;
+};
+
+int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 {
         uint8_t buf[256];
         struct dirent *node;
@@ -28,6 +35,8 @@ int kmain(multiboot_info_t *mbd, uint32_t magic)
 	{
 		PANIC("boot magic is incorrect\n");
 	}
+
+	initial_esp = initial_stack;
 
 	monitor_clear();
 
