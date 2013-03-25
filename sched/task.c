@@ -1,8 +1,19 @@
 #include <string.h>
 #include <asm/page.h>
+#include <kernel/task.h>
 #include <kernel/types.h>
+#include <kernel/common.h>
 
-extern initial_esp;
+volatile struct task_struct *current;
+volatile struct task_struct *ready_queue;
+
+extern uint32_t initial_esp;
+extern struct page_directory *kernel_directory;
+extern struct page_directory *current_directory;
+
+extern uint32_t read_eip();
+
+uint32_t next_pid = 1;
 
 void move_stack(void *new_stack_start, uint32_t size)
 {
@@ -42,4 +53,58 @@ void move_stack(void *new_stack_start, uint32_t size)
                                 asm volatile("movl %0, %%ebp" :: "r" (new_base_ptr));
                         }
                 }
+}
+
+int fork()
+{
+        uint32_t eip;
+        struct page_directory *directory;
+        struct task_struct *parent, *new_task;
+
+        disable_interrupts();
+        parent = (struct task_struct)current;
+        directory = clone_directory(current_directory);
+
+        new_task = (struct task_struct *)kmalloc(sizeof(struct task_struct));
+        new_task->id = next_pid++;
+        new_task->esp = new_task->ebp = 0;
+        new_task->eip = 0;
+        new_task->page_directory = directory;
+        
+        list_add_tail(&new_task->task_list, &ready_queue->task_list);
+
+        eip = read_eip();
+
+        if (current_task == parent_task)
+        {
+                uint32_t esp, ebp;
+
+                asm volatile("mov %%esp, %0" : "=r" (esp));
+                asm volatile("mov %%ebp, %0" : "=r" (ebp));
+
+                new_task->esp = esp;
+                new_task->ebp = ebp;
+                new_task->eip = eip;
+
+                enable_interrupts();
+                return new_task->pid;
+        } else /* child process */ {
+                return 0;
+        }
+}
+
+void init_multitasking()
+{
+        disable_interrupts();
+
+        move_stack((void *)0xE0000000, 0x2000);
+
+        current_task = ready_queue = (struct task_struct *)kmalloc(sizeof(struct task_struct));
+        current_task->id = next_pid++;
+        current_task->esp = current_task->ebp = 0;
+        current_task->eip = 0;
+        current_task->page_directory = current_directory;
+        INIT_LIST_HEAD(&current_task->task_list);
+
+        enable_interrupts();
 }
