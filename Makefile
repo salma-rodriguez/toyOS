@@ -46,6 +46,8 @@ CCSRCS += isr.c tables.c timer.c common.c panic.c bug.c handler.c
 CCSRCS += page.c heap.c clone.c
 # under fs
 CCSRCS += fs.c
+# uncer sched
+CCSRCS += task.c
 
 CCOBJS	= $(addprefix $(BIN)/,${CCSRCS:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
