@@ -53,6 +53,7 @@ void move_stack(void *new_stack_start, uint32_t size)
                                 asm volatile("movl %0, %%ebp" :: "r" (new_base_ptr));
                         }
                 }
+        }
 }
 
 int fork()
@@ -75,7 +76,7 @@ int fork()
 
         eip = read_eip();
 
-        if (current_task == parent_task)
+        if (current == parent_task)
         {
                 uint32_t esp, ebp;
 
@@ -93,18 +94,55 @@ int fork()
         }
 }
 
+void switch_context()
+{
+        if (!current)
+                return;
+
+        uint32_t esp, ebp, eip;
+
+        asm volatile("mov %%esp, %0" : "=r" (esp));
+        asm volatile("mov %%ebp, %0" : "=r" (ebp));
+
+        eip = read_eip();
+
+        if (eip == 0x12345)
+                return;
+
+        current->eip = eip;
+        current->esp = esp;
+        current->ebp = ebp;
+
+        current = list_entry(current->task_list.next, struct task_struct, task_list);
+
+        esp = current->esp;
+        ebp = current->ebp;
+
+        asm volatile("                  \
+                cli;                    \
+                mov %0, %%ecx;          \
+                mov %1, %%esp;          \
+                mov %2, %%ebp;          \
+                mov %3, %%cr3;          \
+                mov $0x12345, %%eax;    \
+                sti;                    \
+                jmp *%%ecx              "
+                :: "r" (eip), "r" (esp), "r" (ebp), "r" (current_directory->physical_addr)
+        );
+}
+
 void init_multitasking()
 {
         disable_interrupts();
 
         move_stack((void *)0xE0000000, 0x2000);
 
-        current_task = ready_queue = (struct task_struct *)kmalloc(sizeof(struct task_struct));
-        current_task->id = next_pid++;
-        current_task->esp = current_task->ebp = 0;
-        current_task->eip = 0;
-        current_task->page_directory = current_directory;
-        INIT_LIST_HEAD(&current_task->task_list);
+        current = ready_queue = (struct task_struct *)kmalloc(sizeof(struct task_struct));
+        current->id = next_pid++;
+        current->esp = current->ebp = 0;
+        current->eip = 0;
+        current->page_directory = current_directory;
+        INIT_LIST_HEAD(&current->task_list);
 
         enable_interrupts();
 }
