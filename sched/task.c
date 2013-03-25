@@ -1,25 +1,26 @@
 #include <string.h>
-#include <asm/page.h>
 #include <kernel/task.h>
 #include <kernel/types.h>
-#include <kernel/common.h>
+#include <kernel/heap.h>
+#include <asm/common.h>
 
-volatile struct task_struct *current;
-volatile struct task_struct *ready_queue;
+struct task_struct *current;
+struct task_struct *ready_queue;
 
 extern uint32_t initial_esp;
 extern struct page_directory *kernel_directory;
 extern struct page_directory *current_directory;
 
 extern uint32_t read_eip();
+extern struct page_directory *clone_directory(struct page_directory *);
 
 uint32_t next_pid = 1;
 
 void move_stack(void *new_stack_start, uint32_t size)
 {
-        uint32_t i
+        uint32_t i;
         off_t offset;
-        uint32_t old_stack_ptr, old_base,ptr;
+        uint32_t old_stack_ptr, old_base_ptr;
         uint32_t new_stack_ptr, new_base_ptr;
 
         for (   i = (uint32_t)new_stack_start;
@@ -36,11 +37,11 @@ void move_stack(void *new_stack_start, uint32_t size)
                 new_stack_ptr = old_stack_ptr + offset;
                 new_base_ptr = old_base_ptr + offset;
                 
-                memcpy((void *)new_stack_ptr, (void *)old_stack_ptr, initial_esp - old_stack_pointer);
+                memcpy((void *)new_stack_ptr, (void *)old_stack_ptr, initial_esp - old_stack_ptr);
 
                 for (i = (uint32_t)new_stack_start; i > (uint32_t)new_stack_start-size; i -= 4)
                 {
-                        uint32_t tmp, tmp2;
+                        uint32_t tmp, *tmp2;
 
                         tmp = *(uint32_t *)i;
                         if ((old_stack_ptr < tmp) && (tmp < initial_esp))
@@ -63,11 +64,11 @@ int fork()
         struct task_struct *parent, *new_task;
 
         disable_interrupts();
-        parent = (struct task_struct)current;
+        parent = (struct task_struct *)current;
         directory = clone_directory(current_directory);
 
         new_task = (struct task_struct *)kmalloc(sizeof(struct task_struct));
-        new_task->id = next_pid++;
+        new_task->pid = next_pid++;
         new_task->esp = new_task->ebp = 0;
         new_task->eip = 0;
         new_task->page_directory = directory;
@@ -76,7 +77,7 @@ int fork()
 
         eip = read_eip();
 
-        if (current == parent_task)
+        if (current == parent)
         {
                 uint32_t esp, ebp;
 
@@ -89,9 +90,8 @@ int fork()
 
                 enable_interrupts();
                 return new_task->pid;
-        } else /* child process */ {
-                return 0;
         }
+        /* else child process */ return 0;
 }
 
 void switch_context()
@@ -131,6 +131,11 @@ void switch_context()
         );
 }
 
+int getpid()
+{
+        return current->pid;
+}
+
 void init_multitasking()
 {
         disable_interrupts();
@@ -138,7 +143,7 @@ void init_multitasking()
         move_stack((void *)0xE0000000, 0x2000);
 
         current = ready_queue = (struct task_struct *)kmalloc(sizeof(struct task_struct));
-        current->id = next_pid++;
+        current->pid = next_pid++;
         current->esp = current->ebp = 0;
         current->eip = 0;
         current->page_directory = current_directory;

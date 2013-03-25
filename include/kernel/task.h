@@ -2,17 +2,17 @@
 #define _TASK_H_
 
 #include <list.h>
-#include <kernel/page.h>
-#include <kernel/common.h>
+#include <asm/page.h>
+#include <asm/common.h>
 
 struct task_struct
 {
         int pid;
         uint32_t eip;
         uint32_t esp, ebp;
-        page_directory_t *page_directory;
+        struct page_directory *page_directory;
         struct list_head task_list;
-}
+};
 
 void init_multitasking();
 void switch_context();
