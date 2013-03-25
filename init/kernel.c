@@ -4,6 +4,7 @@
 #include <kernel/isr.h>
 #include <kernel/types.h>
 #include <kernel/timer.h>
+#include <kernel/task.h>
 #include <kernel/panic.h>
 #include <kernel/monitor.h>
 #include <kernel/printk.h>
@@ -12,6 +13,7 @@
 #include <kernel/heap.h>
 #include <kernel/fs.h>
 #include <kernel/initrd.h>
+#include <assert.h>
 
 uint32_t initial_esp;
 extern struct heap *kheap;
@@ -25,6 +27,7 @@ struct misc
 
 int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 {
+        int ret;
         uint8_t buf[256];
         struct dirent *node;
         struct fs_node *fsnode;
@@ -43,19 +46,24 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 	printk("initializing...\n");
 
 	init_descriptor_tables();
-	
-        initrd_location = *((uint32_t *)mbd->mods_addr);
-        initrd_end = *(uint32_t *)(mbd->mods_addr+4);
-        placement_addr = initrd_end;
 
         init_irq_handlers();
         init_fault_handlers();
 
         init_timer(PIT_FREQUENCY);
 
+	enable_interrupts();
+
+	ASSERT(mbd->mods_count > 0);
+        initrd_location = *((uint32_t *)mbd->mods_addr);
+        initrd_end = *(uint32_t *)(mbd->mods_addr+4);
+
+        placement_addr = initrd_end;
+
 	a = kmalloc(8);
 
 	init_paging();
+	// init_multitasking();
 
         /* testing memory allocation { */
 
@@ -74,6 +82,14 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
         /* } */
 
 	fs_root = (struct fs_node *)initialize_initrd(initrd_location);
+
+	/* testing multitask { */
+          // ret = fork();
+          // printk("fork() returned %lx, and getpid() returned %lx", ret, getpid());
+          // printk("\n==================================================================================\n");
+	/* } */
+
+	disable_interrupts();
 
         /* testing vfs { */
 
@@ -96,8 +112,11 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
                         }
                         i++;
                 }
+                printk("\n");
 
         /* } */
+
+        enable_interrupts();
 
         /* testing division by zero { */
                 // i = 500 / 0;
