@@ -19,6 +19,7 @@ align 4
 start:
 	mov esp, stack + STACKSIZ
 	push eax
+	push esp
 	push ebx
 
 	call kmain
