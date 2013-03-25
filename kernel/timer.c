@@ -1,6 +1,7 @@
 #include <asm/common.h>
 #include <kernel/types.h>
 #include <kernel/isr.h>
+#include <kernel/task.h>
 #include <kernel/timer.h>
 #include <kernel/printk.h>
 
@@ -10,6 +11,7 @@ void handle_pit_irq(struct registers *regs)
 {
 	tick++;
 	DPRINTK("Tick: %d\n", tick);
+	switch_context();
 }
 
 void init_timer(uint32_t frequency)
