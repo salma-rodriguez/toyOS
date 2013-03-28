@@ -67,17 +67,17 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 
         /* testing memory allocation { */
 
-               b = kmalloc(8);
-               c = kmalloc(8);
-               
-               printk("a: %lx, b: %lx\nc: %lx", a, b, c);
-               
-               kfree((void *)c);
-               kfree((void *)b);
-               
-               d = kmalloc(12);
-               
-               printk(", d: %lx\n", d);
+            // b = kmalloc(8);
+            // c = kmalloc(8);
+            // 
+            // printk("a: %lx, b: %lx\nc: %lx", a, b, c);
+            // 
+            // kfree((void *)c);
+            // kfree((void *)b);
+            // 
+            // d = kmalloc(12);
+            // 
+            // printk(", d: %lx\n", d);
 
         /* } */
 
