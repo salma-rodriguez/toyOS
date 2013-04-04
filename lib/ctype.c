@@ -1,4 +1,4 @@
-#include <ctype.h>
+#include <kernel/ctype.h>
 
 char _ctmp;
 const unsigned char _ctype[] = {0x00,				/*   EOF   */
