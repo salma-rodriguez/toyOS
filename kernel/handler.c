@@ -112,10 +112,7 @@ void handle_machine_chck(struct registers *regs)
 
 extern void handle_pit_irq(struct registers *regs);
 
-void handle_keyboard_irq(struct registers *regs)
-{
-	printk("keyboard handler not implemented\n");
-}
+extern void handle_keyboard_irq(struct registers *regs);
 
 void handle_cascade_irq(struct registers *regs)
 {
@@ -189,7 +186,7 @@ void handle_shdd_irq(struct registers *regs)
 
 void init_irq_handlers()
 {
-	printk("IRQ handlers...\t\t");
+	DPRINTK("IRQ handlers...\t\t");
 
 	register_interrupt_handler(PIT, 	(isr_t)handle_pit_irq);
 	register_interrupt_handler(KEYBOARD, 	(isr_t)handle_keyboard_irq);
@@ -213,7 +210,7 @@ void init_irq_handlers()
 
 void init_fault_handlers()
 {
-	printk("fault handlers...\t");
+	DPRINTK("fault handlers...\t");
 
 	register_interrupt_handler(SIG_DZEROV, (isr_t)handle_divz_fault);
 	register_interrupt_handler(SIG_DEBUGV, (isr_t)handle_debugger);
@@ -235,7 +232,7 @@ void init_fault_handlers()
 	register_interrupt_handler(SIG_ALGMNT, (isr_t)handle_align_check);
 	register_interrupt_handler(SIG_MACHNE, (isr_t)handle_machine_chck);
 
-	printk("done!\n");
+	DPRINTK("done!\n");
 }
 
 #endif /* _HANDLER_H_ */
