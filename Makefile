@@ -11,7 +11,7 @@ ASFLAGS	= -felf
 BIN	= bin
 TARGET	= $(BIN)/$(BUILD)
 
-VPATH	= boot lib init kernel mm fs sched
+VPATH	= boot lib init kernel mm fs sched drivers
 MKDIR	= $(CURDIR)/$(BIN)
 
 define CMP
@@ -48,6 +48,8 @@ CCSRCS += page.c heap.c clone.c
 CCSRCS += fs.c
 # uncer sched
 CCSRCS += task.c
+# under drivers
+CCSRCS += keyboard.c
 
 CCOBJS	= $(addprefix $(BIN)/,${CCSRCS:.c=.o})
 ASOBJS	= $(addprefix $(BIN)/,${ASSRCS:.s=.o})
