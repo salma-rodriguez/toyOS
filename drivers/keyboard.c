@@ -1,11 +1,15 @@
+#include <stdio.h>
+#include <string.h>
 #include <kernel/bitops.h>
 #include <kernel/ctype.h>
+#include <kernel/bug.h>
 #include <kernel/keyboard.h>
+#include <kernel/isr.h>
 #include <kernel/panic.h>
-#include <kernel/stdio.h>
-#include <kernel/string.h>
+#include <kernel/printk.h>
 
-#include <asm/interrupt.h>
+#include <asm/common.h>
+#include <asm/int_defs.h>
 
 #define KEYBOARD_IRQ IRQ1
 
@@ -275,11 +279,11 @@ static inline char numeric_row_apply_shift(uint8_t scancode)
  *
  * @param[in] regs unused
  */
-static void handle_keyboard(struct registers *regs)
+void handle_keyboard_irq(struct registers *regs)
 {
     struct keyevent_data keyevent;
 
-    send_eoi();
+    send_eoi_master();
 
     if (!keyboard_handler)
         return;
@@ -326,8 +330,6 @@ static void handle_keyboard(struct registers *regs)
 void init_keyboard()
 {
     memset(&kb_state, 0, sizeof(struct keyboard_state));
-
-    register_interrupt_handler(KEYBOARD_IRQ, handle_keyboard);
 }
 
 /**
