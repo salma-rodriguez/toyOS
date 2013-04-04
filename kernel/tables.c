@@ -34,14 +34,14 @@ idt_page_t  idt_page;
 
 void init_descriptor_tables()
 {
-	printk("descriptor tables...\t");
+	DPRINTK("descriptor tables...\t");
 
 	gdt_init();
 	idt_init();
 
 	memset(&interrupt_handlers, 0, sizeof(isr_t)*IDT_ENTRIES);
 
-	printk("done!\n");
+	DPRINTK("done!\n");
 }
 
 static void gdt_init()

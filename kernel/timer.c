@@ -19,7 +19,7 @@ void init_timer(uint32_t frequency)
 	uint8_t l, h;
 	uint32_t divisor;
 
-	printk("timer...\t\t");
+        DPRINTK("timer...\t\t");
 
 	tick = 0;
 
@@ -32,5 +32,5 @@ void init_timer(uint32_t frequency)
 	outportb(0x40, l);
 	outportb(0x40, h);
 
-	printk("done!\n");
+	DPRINTK("done!\n");
 }
