@@ -13,6 +13,7 @@
 #include <kernel/heap.h>
 #include <kernel/fs.h>
 #include <kernel/initrd.h>
+#include <kernel/keyboard.h>
 #include <assert.h>
 
 uint32_t initial_esp;
@@ -24,6 +25,11 @@ struct misc
         uint32_t magic;
         uint32_t initial_stack;
 };
+
+void handles(const struct keyevent_data * dat)
+{
+        printk("%c", dat->key);
+}
 
 int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 {
@@ -46,6 +52,9 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 	printk("initializing...\n");
 
 	init_descriptor_tables();
+
+	init_keyboard();
+	register_keyboard_handler(&handles);
 
         init_irq_handlers();
         init_fault_handlers();
@@ -93,7 +102,7 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 
         /* testing vfs { */
 
-                i = 0;
+             /* i = 0;
                 node = NULL;
                 while ((node = readdir_fs(fs_root, i)) != NULL)
                 {
@@ -112,7 +121,7 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
                         }
                         i++;
                 }
-                printk("\n");
+                printk("\n"); */
 
         /* } */
 
