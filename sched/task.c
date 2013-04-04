@@ -3,6 +3,7 @@
 #include <kernel/types.h>
 #include <kernel/heap.h>
 #include <asm/common.h>
+#include <kernel/printk.h>
 
 struct task_struct *current;
 struct task_struct *ready_queue;
@@ -139,6 +140,8 @@ int getpid()
 
 void init_multitasking()
 {
+        DPRINTK("multitasking...\t\t");
+
         disable_interrupts();
 
         move_stack((void *)0xE0000000, 0x2000);
@@ -151,4 +154,6 @@ void init_multitasking()
         INIT_LIST_HEAD(&current->task_list);
 
         enable_interrupts();
+
+        DPRINTK("done!\n");
 }
