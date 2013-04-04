@@ -94,7 +94,7 @@ void init_paging()
 	uint32_t i;
 	uint32_t mem_end_page;
 
-	printk("paging...\t\t");
+	DPRINTK("paging...\t\t");
 
 	mem_end_page = 0x1000000;
 	nframes = mem_end_page / PAGE_SIZ;
@@ -135,7 +135,7 @@ void init_paging()
 	current_directory = clone_directory(kernel_directory);
         switch_page_directory(current_directory);
 
-	printk("done!\n");
+	DPRINTK("done!\n");
 }
 
 struct page *get_page(uint32_t address, int creat, struct page_directory *dir)
