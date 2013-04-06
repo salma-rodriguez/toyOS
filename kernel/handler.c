@@ -205,12 +205,12 @@ void init_irq_handlers()
 	register_interrupt_handler(PATA_IDE,	(isr_t)handle_phdd_irq);
 	register_interrupt_handler(SATA_IDE,	(isr_t)handle_shdd_irq);
 
-	printk("done!\n");
+	DPRINTK("done!\n");
 }
 
 void init_fault_handlers()
 {
-	DPRINTK("fault handlers...\t");
+	DPRINTK("fault handlers...\t\t");
 
 	register_interrupt_handler(SIG_DZEROV, (isr_t)handle_divz_fault);
 	register_interrupt_handler(SIG_DEBUGV, (isr_t)handle_debugger);

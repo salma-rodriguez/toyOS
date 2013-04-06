@@ -34,7 +34,7 @@ idt_page_t  idt_page;
 
 void init_descriptor_tables()
 {
-	DPRINTK("descriptor tables...\t");
+	DPRINTK("descriptor tables...\t\t");
 
 	gdt_init();
 	idt_init();
