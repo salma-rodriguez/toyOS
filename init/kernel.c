@@ -26,9 +26,10 @@ struct misc
         uint32_t initial_stack;
 };
 
-void handles(const struct keyevent_data * dat)
+void handles(const struct keyevent_data * keyevent)
 {
-        printk("%c", dat->key);
+        if (!keyevent->released)
+                printk("%c", keyevent->key);
 }
 
 int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
@@ -49,12 +50,11 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 
 	monitor_clear();
 
-	printk("initializing...\n");
+	DPRINTK("initializing...\n");
 
 	init_descriptor_tables();
 
 	init_keyboard();
-	register_keyboard_handler(&handles);
 
         init_irq_handlers();
         init_fault_handlers();
@@ -98,7 +98,7 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
           // printk("\n==================================================================================\n");
 	/* } */
 
-	disable_interrupts();
+	// disable_interrupts();
 
         /* testing vfs { */
 
@@ -125,7 +125,7 @@ int kmain(multiboot_info_t *mbd, uint32_t initial_stack, uint32_t magic)
 
         /* } */
 
-        enable_interrupts();
+        // enable_interrupts();
 
         /* testing division by zero { */
                 // i = 500 / 0;
